@@ -1,0 +1,16 @@
+.app-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-container {
+  flex: 1;
+  background: #1e1e1e;
+  color: white;
+  display: flex;
+}
+
+.content-container {
+  flex: 1;
+}
