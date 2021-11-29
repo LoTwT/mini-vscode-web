@@ -1,8 +1,24 @@
 import "./index.less"
+import type { ITabs } from "../../App"
 
-export default () => (
-  <div className="tabs">
-    <div className="tab">index.js</div>
-    <div className="tab cur">App.js</div>
-  </div>
-)
+interface IProps {
+  tabs: ITabs[]
+  cur: string
+  onChange: (curTab: string) => void
+}
+
+export default ({ tabs, cur, onChange }: IProps) => {
+  return (
+    <div className="tabs">
+      {tabs.map((tab) => (
+        <div
+          className={`tab ${cur === tab.key ? "cur" : ""}`}
+          key={tab.key}
+          onClick={() => onChange(tab.key)}
+        >
+          {tab.title}
+        </div>
+      ))}
+    </div>
+  )
+}
