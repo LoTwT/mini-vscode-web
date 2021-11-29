@@ -1,4 +1,4 @@
-import "./App.css"
+import "./App.less"
 import StatusBar from "./components/StatusBar"
 import Aside from "./components/Aside"
 import Tabs from "./components/Tabs"
