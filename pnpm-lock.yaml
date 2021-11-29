@@ -8,12 +8,16 @@ specifiers:
   prettier: ^2.5.0
   react: ^17.0.2
   react-dom: ^17.0.2
+  react-redux: ^7.2.6
+  redux: ^4.1.2
   typescript: ^4.5.2
   vite: ^2.6.14
 
 dependencies:
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
+  react-redux: 7.2.6_react-dom@17.0.2+react@17.0.2
+  redux: 4.1.2
 
 devDependencies:
   "@types/react": 17.0.37
@@ -378,6 +382,17 @@ packages:
       "@babel/types": 7.16.0
     dev: true
 
+  /@babel/runtime/7.16.3:
+    resolution:
+      {
+        integrity: sha512-WBwekcqacdY2e9AF/Q7WLFUWmdJGJTkbjqTjoMDgXkVZ3ZRUvOPsLb5KdwISoQVsbP+DQzVZW4Zhci0DvpbNTQ==,
+        tarball: "@babel/runtime/download/@babel/runtime-7.16.3.tgz?cache=0&sync_timestamp=1636501703701&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2F%40babel%2Fruntime%2Fdownload%2F%40babel%2Fruntime-7.16.3.tgz",
+      }
+    engines: { node: ">=6.9.0" }
+    dependencies:
+      regenerator-runtime: 0.13.9
+    dev: false
+
   /@babel/template/7.16.0:
     resolution:
       {
@@ -436,13 +451,23 @@ packages:
       picomatch: 2.3.0
     dev: true
 
+  /@types/hoist-non-react-statics/3.3.1:
+    resolution:
+      {
+        integrity: sha1-ESSq/lEYy1kZd66xzqrtEHDrA58=,
+        tarball: "@types/hoist-non-react-statics/download/@types/hoist-non-react-statics-3.3.1.tgz",
+      }
+    dependencies:
+      "@types/react": 17.0.37
+      hoist-non-react-statics: 3.3.2
+    dev: false
+
   /@types/prop-types/15.7.4:
     resolution:
       {
         integrity: sha1-/PcgXCXf95Xuea8eMNosl5CAjxE=,
         tarball: "@types/prop-types/download/@types/prop-types-15.7.4.tgz",
       }
-    dev: true
 
   /@types/react-dom/17.0.11:
     resolution:
@@ -454,6 +479,19 @@ packages:
       "@types/react": 17.0.37
     dev: true
 
+  /@types/react-redux/7.1.20:
+    resolution:
+      {
+        integrity: sha1-QvDmGrq7Yh4SxmyW3alMWEI7198=,
+        tarball: "@types/react-redux/download/@types/react-redux-7.1.20.tgz",
+      }
+    dependencies:
+      "@types/hoist-non-react-statics": 3.3.1
+      "@types/react": 17.0.37
+      hoist-non-react-statics: 3.3.2
+      redux: 4.1.2
+    dev: false
+
   /@types/react/17.0.37:
     resolution:
       {
@@ -464,7 +502,6 @@ packages:
       "@types/prop-types": 15.7.4
       "@types/scheduler": 0.16.2
       csstype: 3.0.10
-    dev: true
 
   /@types/scheduler/0.16.2:
     resolution:
@@ -472,7 +509,6 @@ packages:
         integrity: sha1-GmL4lSVyPd4kuhsBsJK/XfitTTk=,
         tarball: "@types/scheduler/download/@types/scheduler-0.16.2.tgz",
       }
-    dev: true
 
   /@vitejs/plugin-react/1.1.0:
     resolution:
@@ -586,7 +622,6 @@ packages:
         integrity: sha512-2u44ZG2OcNUO9HDp/Jl8C07x6pU/eTR3ncV91SiK3dhG9TWvRVsCoJw14Ckx5DgWkzGA3waZWO3d7pgqpUI/XA==,
         tarball: csstype/download/csstype-3.0.10.tgz?cache=0&sync_timestamp=1637224867418&other_urls=https%3A%2F%2Fregistry.npmmirror.com%2Fcsstype%2Fdownload%2Fcsstype-3.0.10.tgz,
       }
-    dev: true
 
   /debug/3.2.7:
     resolution:
@@ -962,6 +997,16 @@ packages:
       function-bind: 1.1.1
     dev: true
 
+  /hoist-non-react-statics/3.3.2:
+    resolution:
+      {
+        integrity: sha1-7OCsr3HWLClpwuxZ/v9CpLGoW0U=,
+        tarball: hoist-non-react-statics/download/hoist-non-react-statics-3.3.2.tgz,
+      }
+    dependencies:
+      react-is: 16.13.1
+    dev: false
+
   /iconv-lite/0.4.24:
     resolution:
       {
@@ -1218,6 +1263,18 @@ packages:
     hasBin: true
     dev: true
 
+  /prop-types/15.7.2:
+    resolution:
+      {
+        integrity: sha1-UsQedbjIfnK52TYOAga5ncv/psU=,
+        tarball: prop-types/download/prop-types-15.7.2.tgz,
+      }
+    dependencies:
+      loose-envify: 1.4.0
+      object-assign: 4.1.1
+      react-is: 16.13.1
+    dev: false
+
   /prr/1.0.1:
     resolution:
       {
@@ -1242,6 +1299,48 @@ packages:
       scheduler: 0.20.2
     dev: false
 
+  /react-is/16.13.1:
+    resolution:
+      {
+        integrity: sha1-eJcppNw23imZ3BVt1sHZwYzqVqQ=,
+        tarball: react-is/download/react-is-16.13.1.tgz,
+      }
+    dev: false
+
+  /react-is/17.0.2:
+    resolution:
+      {
+        integrity: sha1-5pHUqOnHiTZWVVOas3J2Kw77VPA=,
+        tarball: react-is/download/react-is-17.0.2.tgz,
+      }
+    dev: false
+
+  /react-redux/7.2.6_react-dom@17.0.2+react@17.0.2:
+    resolution:
+      {
+        integrity: sha1-SWM6JP5VK1+cr1j+uKE4k23f6ao=,
+        tarball: react-redux/download/react-redux-7.2.6.tgz,
+      }
+    peerDependencies:
+      react: ^16.8.3 || ^17
+      react-dom: "*"
+      react-native: "*"
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      "@babel/runtime": 7.16.3
+      "@types/react-redux": 7.1.20
+      hoist-non-react-statics: 3.3.2
+      loose-envify: 1.4.0
+      prop-types: 15.7.2
+      react: 17.0.2
+      react-dom: 17.0.2_react@17.0.2
+      react-is: 17.0.2
+    dev: false
+
   /react-refresh/0.11.0:
     resolution:
       {
@@ -1261,6 +1360,24 @@ packages:
     dependencies:
       loose-envify: 1.4.0
       object-assign: 4.1.1
+    dev: false
+
+  /redux/4.1.2:
+    resolution:
+      {
+        integrity: sha1-FA81Qm2Zu0cpr3YK/PeeqqxAcQQ=,
+        tarball: redux/download/redux-4.1.2.tgz,
+      }
+    dependencies:
+      "@babel/runtime": 7.16.3
+    dev: false
+
+  /regenerator-runtime/0.13.9:
+    resolution:
+      {
+        integrity: sha1-iSV0Kpj/2QgUmI11Zq0wyjsmO1I=,
+        tarball: regenerator-runtime/download/regenerator-runtime-0.13.9.tgz,
+      }
     dev: false
 
   /resolve/1.20.0:
