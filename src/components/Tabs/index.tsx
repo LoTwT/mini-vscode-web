@@ -1,5 +1,5 @@
 import "./index.less"
-import type { ITabs } from "../../App"
+import type { ITabs } from "@/App"
 
 interface IProps {
   tabs: ITabs[]

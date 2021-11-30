@@ -1,10 +1,10 @@
 import { useState } from "react"
 
 import "./App.less"
-import StatusBar from "./components/StatusBar"
-import Aside from "./components/Aside"
-import Tabs from "./components/Tabs"
-import Content from "./components/Content"
+import StatusBar from "@/components/StatusBar/index"
+import Aside from "@/components/Aside/index"
+import Tabs from "@/components/Tabs/index"
+import Content from "@/components/Content/index"
 
 export interface ITabs {
   key: string
