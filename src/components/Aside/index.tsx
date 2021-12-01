@@ -1,8 +1,10 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useSelector } from "react-redux"
 import type { Store } from "@/store/index"
 import { invokePre } from "@/libs/channel"
+import type { Nullable } from "@/types/index"
+import type { IDirectoryContent } from "@/types/file"
 
 import "./index.less"
 
@@ -14,62 +16,42 @@ export default () => (
 
 const Tree = () => {
   const projectRoot = useSelector<Store>(state => state.projectRoot)
-  const [list, setList] = useState<string[]>([])
-  invokePre("readDir", projectRoot).then(res => setList(res as string[]))
+  const [list, setList] = useState<Nullable<IDirectoryContent[]>>(null)
 
-  console.log(list)
+  useEffect(() => {
+    invokePre<IDirectoryContent[]>("readDir", projectRoot).then(res => {
+      // 对读取到的文件夹内容进行排序
+      // 1. 类型 文件夹 -> 文件
+      // 2. 名字
+      res.sort((o1, o2) => o1.name.localeCompare(o2.name))
+      res.sort((o1, o2) => (+o2.isDir - +o1.isDir))
 
-  return (
-    <div>
-      <ul className="tree">
-        <li className="tree-item">
-          <div className="head">
-            <span className="icon iconfont">&#xe666;</span>
-            <span className="title">node_modules</span>
-          </div>
-          <div className="content"></div>
-        </li>
+      setList(res)
+    })
+  }, [projectRoot])
 
-        <li className="tree-item">
-          <div className="head">
-            <span className="icon iconfont">&#xe665;</span>
-            <span className="title">public</span>
-          </div>
-          <div className="content">
-            <ul className="tree">
-              <li className="tree-item">
-                <div className="head">
-                  <span className="icon iconfont">&#xe666;</span>
-                  <span className="title">node_modules</span>
-                </div>
-                <div className="content"></div>
-              </li>
-
-              <li className="tree-item">
-                <div className="head">
-                  <span className="icon iconfont">&#xe665;</span>
-                  <span className="title">public</span>
-                </div>
-                <div className="content"></div>
-              </li>
-
-              <li className="tree-item">
-                <div className="head">
-                  <span className="icon iconfont">&#xe688;</span>
-                  <span className="title">index.js</span>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </li>
-
-        <li className="tree-item">
-          <div className="head">
-            <span className="icon iconfont">&#xe688;</span>
-            <span className="title">index.js</span>
-          </div>
-        </li>
-      </ul>
-    </div>
-  )
+  return (<div>
+    <ul className="tree">
+      {list && list.map(dirContent => dirContent.isDir
+        ? <TreeItem title={dirContent.name} icon="arrow-right" />
+        : <TreeItem title={dirContent.name} icon="js" />
+      )}
+    </ul >
+  </div >)
 }
+
+interface ITreeItemProp {
+  title: string
+  icon: string
+  content?: IDirectoryContent[]
+}
+
+const TreeItem = ({ title, icon, content }: ITreeItemProp) => (
+  <li className="tree-item">
+    <div className="head">
+      <span className={`icon iconfont icon-${icon}`}></span>
+      <span className="title">{title}</span>
+    </div>
+    <div className="content">{content}</div>
+  </li>
+)

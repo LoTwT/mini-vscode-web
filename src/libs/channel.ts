@@ -13,9 +13,9 @@ export function invokeMain(channel: string, ...data: any[]) {
   return p;
 }
 
-export function invokePre(channel: string, ...data: any[]) {
+export function invokePre<T>(channel: string, ...data: any[]): Promise<T> {
   const id = Math.random();
-  let p = new Promise((resolve, reject) => {
+  let p = new Promise<T>((resolve, reject) => {
     wait[id] = { resolve, reject };
   });
   window.postMessage({
