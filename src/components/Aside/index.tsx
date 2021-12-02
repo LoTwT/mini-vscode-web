@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux"
 import Tree from "./components/Tree"
-import type { Store } from "@/store/index"
+import type { Store } from "@/types/store"
 
 import "./index.less"
 
