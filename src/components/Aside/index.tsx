@@ -5,12 +5,11 @@ import type { Store } from "@/types/store"
 import "./index.less"
 
 export default () => {
-  const projectRoot = useSelector<Store, string>(state => state.projectRoot)
-  const openkeys = ["src"]
+  const projectRoot = useSelector((state: Store) => state.projectRoot)
 
   return (
     <div className="aside">
-      <Tree root={projectRoot} openkeys={openkeys} />
+      <Tree root={projectRoot} />
     </div>
   )
 }

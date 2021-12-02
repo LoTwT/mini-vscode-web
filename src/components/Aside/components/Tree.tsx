@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react"
+import { useSelector } from "react-redux"
 import { invokePre } from "@/libs/channel"
 import type { Nullable } from "@/types/index"
 import type { IDirectoryContent } from "@/types/file"
 import TreeItem from "./TreeItem"
 import { ICON_MAP } from "../config/index"
+import type { Store } from "@/types/store"
 
 interface ITreeProp {
   root: string
-  openkeys: string[]
 }
 
-const Tree = ({ root, openkeys }: ITreeProp) => {
+const Tree = ({ root }: ITreeProp) => {
   const [list, setList] = useState<Nullable<IDirectoryContent[]>>(null)
 
   useEffect(() => {
@@ -25,7 +26,7 @@ const Tree = ({ root, openkeys }: ITreeProp) => {
     })
   }, [root])
 
-
+  const openDirs = useSelector((state: Store) => state.openDirs)
 
   const RenderItem = ({ name, isDir }: IDirectoryContent) => {
     const filepath = root + "\\" + name
@@ -35,9 +36,9 @@ const Tree = ({ root, openkeys }: ITreeProp) => {
     // 是文件夹
     if (isDir) {
       // 展开了
-      if (openkeys.includes(name)) {
+      if (openDirs.includes(filepath)) {
         icon = ICON_MAP.DIR_OPEND
-        children = <Tree root={filepath} openkeys={[]} />
+        children = <Tree root={filepath} />
       } else {
         // 没展开
         icon = ICON_MAP.DIR_CLOSED

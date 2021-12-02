@@ -3,7 +3,7 @@ import type { Store, StoreAction } from "@/types/store"
 
 const initialState = {
   projectRoot: "E:\\lo\\codes\\mini-vscode\\web",
-  openDirs: []
+  openDirs: ["E:\\lo\\codes\\mini-vscode\\web\\src"]
 }
 
 export const ACTION_MAP = {
