@@ -6,20 +6,7 @@ import Aside from "@/components/Aside/index"
 import Tabs from "@/components/Tabs/index"
 import Content from "@/components/Content/index"
 
-export interface ITabs {
-  key: string
-  title: string
-}
-
-const tabs: ITabs[] = [
-  { key: "e:\\tmp\\react-1\\src\\index.js", title: "index.js" },
-  { key: "e:\\tmp\\react-1\\src\\App.js", title: "App.js" },
-  { key: "e:\\tmp\\react-1\\src\\1.css", title: "1.css" },
-]
-
 function App() {
-  const [cur, setCur] = useState(tabs[0].key)
-
   return (
     <div className="app-container">
       <div className="main-container">
@@ -29,10 +16,10 @@ function App() {
         {/* content */}
         <div className="content-container">
           {/* content tabs */}
-          <Tabs tabs={tabs} cur={cur} onChange={setCur} />
+          <Tabs />
 
           {/* content content */}
-          <Content filepath={cur} />
+          <Content />
         </div>
       </div>
       <StatusBar />

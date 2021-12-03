@@ -1,11 +1,13 @@
 export interface Store {
   projectRoot: string
   openDirs: string[]
+  openTabs: string[]
+  currTab: string
 }
 
-export type StoreAction = CreateAction<Store, "openDirs">
+export type StoreAction = CreateAction<Store>
 
-type CreateAction<T extends Record<string, any>, P extends keyof T = keyof T> = P extends P ? {
+type CreateAction<T, P extends keyof T = keyof T> = P extends P ? {
   type: `set${Capitalize<P & string>}`,
-  value: T[P]
+  value: T[P & string]
 } : never

@@ -3,12 +3,14 @@ import type { Store, StoreAction } from "@/types/store"
 import { getLocalStorage, setLocalStorage } from "@/utils/cache"
 import { ACTION_MAP, LOCAL_STORAGE_KEY_MAP } from "./const"
 
-const initialState = {
+const initialState: Store = {
   projectRoot: "E:\\lo\\codes\\mini-vscode\\web",
-  openDirs: getLocalStorage<string[]>(LOCAL_STORAGE_KEY_MAP.OEPN_DIRS) || []
+  openDirs: getLocalStorage<string[]>(LOCAL_STORAGE_KEY_MAP.OEPN_DIRS) || [],
+  openTabs: ["E:\\lo\\codes\\mini-vscode\\web\\src\\App.tsx"],
+  currTab: "E:\\lo\\codes\\mini-vscode\\web\\src\\App.tsx"
 }
 
-const reducer: Reducer<Store, StoreAction> = (state = initialState, { type, value }) => {
+const reducer = (state = initialState, { type, value }: StoreAction) => {
   switch (type) {
     case ACTION_MAP.SET_OPEN_DIRS:
       setLocalStorage(LOCAL_STORAGE_KEY_MAP.OEPN_DIRS, value)
@@ -17,11 +19,24 @@ const reducer: Reducer<Store, StoreAction> = (state = initialState, { type, valu
         ...state,
         openDirs: value
       }
+
+    case ACTION_MAP.SET_OPEN_TABS:
+      return {
+        ...state,
+        openTabs: value
+      }
+
+    case ACTION_MAP.SET_CURR_TAB:
+      return {
+        ...state,
+        currTab: value
+      }
+
     default:
       return state
   }
 }
 
-const store = createStore(reducer)
+const store = createStore(reducer as Reducer)
 
 export default store

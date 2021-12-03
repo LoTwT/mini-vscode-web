@@ -1,22 +1,26 @@
+import { ACTION_MAP } from "@/store/const"
+import { Store } from "@/types/store"
+import { getFileName } from "@/utils/path"
+import { useSelector, useDispatch } from "react-redux"
+
 import "./index.less"
-import type { ITabs } from "@/App"
 
-interface IProps {
-  tabs: ITabs[]
-  cur: string
-  onChange: (curTab: string) => void
-}
+export default () => {
+  const dispatch = useDispatch()
+  const openTabs = useSelector((state: Store) => state.openTabs)
+  const currTab = useSelector((state: Store) => state.currTab)
 
-export default ({ tabs, cur, onChange }: IProps) => {
+  const onChangeTab = (newTab: string) => dispatch({ type: ACTION_MAP.SET_CURR_TAB, value: newTab })
+
   return (
     <div className="tabs">
-      {tabs.map((tab) => (
+      {openTabs.map((tab) => (
         <div
-          className={`tab ${cur === tab.key ? "cur" : ""}`}
-          key={tab.key}
-          onClick={() => onChange(tab.key)}
+          className={`tab ${currTab === tab ? "cur" : ""}`}
+          key={tab}
+          onClick={() => onChangeTab(tab)}
         >
-          {tab.title}
+          {getFileName(tab)}
         </div>
       ))}
     </div>
