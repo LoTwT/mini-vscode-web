@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import { invokePre } from "@/libs/channel"
 import type { Nullable } from "@/types/index"
 import type { IDirectoryContent } from "@/types/file"
 import TreeItem from "./TreeItem"
 import { ICON_MAP } from "../config/index"
 import type { Store } from "@/types/store"
+import { ACTION_MAP } from "@/store/const"
 
 interface ITreeProp {
   root: string
@@ -13,6 +14,7 @@ interface ITreeProp {
 
 const Tree = ({ root }: ITreeProp) => {
   const [list, setList] = useState<Nullable<IDirectoryContent[]>>(null)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     invokePre<IDirectoryContent[]>("readDir", root).then(res => {
@@ -48,8 +50,27 @@ const Tree = ({ root }: ITreeProp) => {
       icon = ICON_MAP.JS
     }
 
+    const onTreeItemClick = () => {
+      // 切换打开状态
+      if (isDir) {
+        const index = openDirs.indexOf(filepath)
+
+        if (index === -1) {
+          // 打开文件夹
+          dispatch({ type: ACTION_MAP.SET_OPEN_DIRS, value: [...openDirs, filepath] })
+        } else {
+          // 关闭文件夹
+          const newOpenDirs = [...openDirs]
+          newOpenDirs.splice(index, 1)
+          dispatch({ type: ACTION_MAP.SET_OPEN_DIRS, value: newOpenDirs })
+        }
+      } else {
+
+      }
+    }
+
     return (
-      <TreeItem key={filepath} title={name} icon={icon}>
+      <TreeItem key={filepath} title={name} icon={icon} onClick={onTreeItemClick}>
         {children}
       </TreeItem>
     )
