@@ -8,3 +8,9 @@ export const ACTION_MAP = {
 export const LOCAL_STORAGE_KEY_MAP = {
   LAST_PROJECT_ROOT: "last_project_root"
 } as const
+
+// invodePre 监听的事件
+export const INVOKE_PRELOAD_MESSAGE = {
+  READ_DIR: "readDir",
+  READ_FILE: "readFile"
+} as const

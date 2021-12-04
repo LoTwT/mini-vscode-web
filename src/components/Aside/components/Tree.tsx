@@ -6,7 +6,7 @@ import type { IDirectoryContent } from "@/types/file"
 import TreeItem from "./TreeItem"
 import { ICON_MAP } from "../config/index"
 import type { Store } from "@/types/store"
-import { ACTION_MAP } from "@/store/const"
+import { ACTION_MAP, INVOKE_PRELOAD_MESSAGE } from "@/store/const"
 
 interface ITreeProp {
   root: string
@@ -20,7 +20,7 @@ const Tree = ({ root }: ITreeProp) => {
 
 
   useEffect(() => {
-    invokePre<IDirectoryContent[]>("readDir", root).then(res => {
+    invokePre<IDirectoryContent[]>(INVOKE_PRELOAD_MESSAGE.READ_DIR, root).then(res => {
       // 对读取到的文件夹内容进行排序
       // 1. 类型 文件夹 -> 文件
       // 2. 名字

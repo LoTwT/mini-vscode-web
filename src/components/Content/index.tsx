@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux"
 import "./index.less"
 import { Store } from "@/types/store"
 import { invokePre } from "@/libs/channel"
+import { INVOKE_PRELOAD_MESSAGE } from "@/store/const"
 
 export default () => {
   const dispatch = useDispatch()
@@ -11,7 +12,7 @@ export default () => {
   const [codes, setCodes] = useState("")
 
   useEffect(() => {
-    invokePre<string>("readFile", currTab).then(setCodes)
+    invokePre<string>(INVOKE_PRELOAD_MESSAGE.READ_FILE, currTab).then(setCodes)
   }, [currTab])
 
   return currTab ? (
