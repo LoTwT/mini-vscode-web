@@ -5,5 +5,5 @@ export const ACTION_MAP = {
 } as const
 
 export const LOCAL_STORAGE_KEY_MAP = {
-  OEPN_DIRS: "openDirs"
+  STATE: "state"
 } as const

@@ -1,40 +1,42 @@
 import { createStore, Reducer } from "redux"
 import type { Store, StoreAction } from "@/types/store"
-import { getLocalStorage, setLocalStorage } from "@/utils/cache"
-import { ACTION_MAP, LOCAL_STORAGE_KEY_MAP } from "./const"
+import { ACTION_MAP } from "./const"
+import { loadState, saveState } from "./init"
+import { Nullable } from "@/types"
 
-const initialState: Store = {
-  projectRoot: "E:\\lo\\codes\\mini-vscode\\web",
-  openDirs: getLocalStorage<string[]>(LOCAL_STORAGE_KEY_MAP.OEPN_DIRS) || [],
-  openTabs: [],
-  currTab: ""
-}
+const initialState: Store = loadState()
 
 const reducer = (state = initialState, { type, value }: StoreAction) => {
+  let newState: Nullable<Store> = null
+
   switch (type) {
     case ACTION_MAP.SET_OPEN_DIRS:
-      setLocalStorage(LOCAL_STORAGE_KEY_MAP.OEPN_DIRS, value)
-
-      return {
+      newState = {
         ...state,
-        openDirs: value
+        openDirs: value as string[]
       }
+      break
 
     case ACTION_MAP.SET_OPEN_TABS:
-      return {
+      newState = {
         ...state,
-        openTabs: value
+        openTabs: value as string[]
       }
+      break
 
     case ACTION_MAP.SET_CURR_TAB:
-      return {
+      newState = {
         ...state,
-        currTab: value
+        currTab: value as string
       }
+      break
 
     default:
       return state
   }
+
+  newState && saveState(newState)
+  return newState
 }
 
 const store = createStore(reducer as Reducer)
