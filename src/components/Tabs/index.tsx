@@ -12,7 +12,7 @@ export default () => {
 
   const onChangeTab = (newTab: string) => dispatch({ type: ACTION_MAP.SET_CURR_TAB, value: newTab })
 
-  return (
+  return openTabs.length !== 0 ? (
     <div className="tabs">
       {openTabs.map((tab) => (
         <div
@@ -24,5 +24,5 @@ export default () => {
         </div>
       ))}
     </div>
-  )
+  ) : null
 }

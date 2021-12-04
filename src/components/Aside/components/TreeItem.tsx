@@ -1,15 +1,27 @@
 interface ITreeItemProp {
   title: string
   icon: string
-  children?: JSX.Element
+  isActive: boolean
   onClick: () => void
+  children?: JSX.Element
 }
 
-const TreeItem = ({ title, icon, children, onClick }: ITreeItemProp) => (
+const TreeItem = ({
+  title,
+  icon,
+  isActive,
+  children,
+  onClick
+}: ITreeItemProp) => (
   <li className="tree-item">
     <div className="head">
       <span className={`icon iconfont icon-${icon}`}></span>
-      <span className="title" onClick={onClick}>{title}</span>
+      <span
+        className={`title ${isActive ? "active" : ""}`}
+        onClick={onClick}
+      >
+        {title}
+      </span>
     </div>
     <div className="content">{children}</div>
   </li>

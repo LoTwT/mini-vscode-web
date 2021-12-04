@@ -15,6 +15,9 @@ interface ITreeProp {
 const Tree = ({ root }: ITreeProp) => {
   const [list, setList] = useState<Nullable<IDirectoryContent[]>>(null)
   const dispatch = useDispatch()
+  const { openDirs, openTabs, currTab } = useSelector((state: Store) => state)
+
+
 
   useEffect(() => {
     invokePre<IDirectoryContent[]>("readDir", root).then(res => {
@@ -27,8 +30,6 @@ const Tree = ({ root }: ITreeProp) => {
       setList(res)
     })
   }, [root])
-
-  const openDirs = useSelector((state: Store) => state.openDirs)
 
   const RenderItem = ({ name, isDir }: IDirectoryContent) => {
     const filepath = root + "\\" + name
@@ -53,6 +54,7 @@ const Tree = ({ root }: ITreeProp) => {
     const onTreeItemClick = () => {
       // 切换打开状态
       if (isDir) {
+        // 是文件夹
         const index = openDirs.indexOf(filepath)
 
         if (index === -1) {
@@ -65,12 +67,25 @@ const Tree = ({ root }: ITreeProp) => {
           dispatch({ type: ACTION_MAP.SET_OPEN_DIRS, value: newOpenDirs })
         }
       } else {
+        // 是文件
+        if (!openTabs.includes(filepath)) {
+          // 文件原先没被打开，添加到 openTabs 中
+          dispatch({ type: ACTION_MAP.SET_OPEN_TABS, value: [...openTabs, filepath] })
+        }
 
+        // 无论如何都会跳转到点击的 tab (设置 currTab 为点击的 tab)
+        dispatch({ type: ACTION_MAP.SET_CURR_TAB, value: filepath })
       }
     }
 
     return (
-      <TreeItem key={filepath} title={name} icon={icon} onClick={onTreeItemClick}>
+      <TreeItem
+        key={filepath}
+        title={name}
+        icon={icon}
+        isActive={filepath === currTab}
+        onClick={onTreeItemClick}
+      >
         {children}
       </TreeItem>
     )

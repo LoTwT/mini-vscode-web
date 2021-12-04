@@ -5,9 +5,7 @@ export default () => {
   const dispatch = useDispatch()
   const currTab = useSelector((state: Store) => state.currTab)
 
-  return (
-    <div className="content">
-      文件路径：{currTab}
-    </div>
-  )
+  return currTab ? (
+    <div className="content">{currTab}</div>
+  ) : null
 }

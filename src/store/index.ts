@@ -6,8 +6,8 @@ import { ACTION_MAP, LOCAL_STORAGE_KEY_MAP } from "./const"
 const initialState: Store = {
   projectRoot: "E:\\lo\\codes\\mini-vscode\\web",
   openDirs: getLocalStorage<string[]>(LOCAL_STORAGE_KEY_MAP.OEPN_DIRS) || [],
-  openTabs: ["E:\\lo\\codes\\mini-vscode\\web\\src\\App.tsx"],
-  currTab: "E:\\lo\\codes\\mini-vscode\\web\\src\\App.tsx"
+  openTabs: [],
+  currTab: ""
 }
 
 const reducer = (state = initialState, { type, value }: StoreAction) => {
