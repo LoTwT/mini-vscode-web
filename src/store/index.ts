@@ -6,28 +6,28 @@ import { Nullable } from "@/types"
 
 const initialState: Store = loadState()
 
-const reducer = (state = initialState, { type, value }: StoreAction) => {
+const reducer: Reducer<Store, StoreAction> = (state = initialState, action) => {
   let newState: Nullable<Store> = null
 
-  switch (type) {
+  switch (action.type) {
     case ACTION_MAP.SET_OPEN_DIRS:
       newState = {
         ...state,
-        openDirs: value as string[]
+        openDirs: action.value
       }
       break
 
     case ACTION_MAP.SET_OPEN_TABS:
       newState = {
         ...state,
-        openTabs: value as string[]
+        openTabs: action.value
       }
       break
 
     case ACTION_MAP.SET_CURR_TAB:
       newState = {
         ...state,
-        currTab: value as string
+        currTab: action.value
       }
       break
 
@@ -39,6 +39,6 @@ const reducer = (state = initialState, { type, value }: StoreAction) => {
   return newState
 }
 
-const store = createStore(reducer as Reducer)
+const store = createStore(reducer)
 
 export default store
