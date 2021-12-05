@@ -1,6 +1,7 @@
 .editor {
   position: relative;
   height: 100%;
+  overflow: hidden;
 
   @font: 20px/26px Consolas, "Courier New", monospace;
 
@@ -31,5 +32,18 @@
     caret-color: #fff;
     border: none;
     outline: none;
+    resize: none;
+
+    &::-webkit-scrollbar {
+      width: 14px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #1e1e1e;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #424242;
+    }
   }
 }

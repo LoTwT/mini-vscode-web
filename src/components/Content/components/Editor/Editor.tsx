@@ -14,6 +14,7 @@ const Editor = () => {
   const dispatch = useDispatch()
 
   const [codes, setCodes] = useState("")
+  const [scroll, setScroll] = useState<[number, number]>([0, 0])
 
   useEffect(() => {
     invokePre<string>(INVOKE_PRELOAD_MESSAGE.READ_FILE, currTab).then(setCodes)
@@ -21,11 +22,22 @@ const Editor = () => {
 
   const html = useMemo(() => hljs.highlight(codes, { language: "javascript" }).value, [codes])
 
+  const handleTextAreaScroll = (ev: React.UIEvent<HTMLTextAreaElement, UIEvent>) => {
+    setScroll([
+      ev.currentTarget.scrollLeft,
+      ev.currentTarget.scrollTop
+    ])
+  }
+
   return currTab ? (
     <>
       <div className="editor">
-        <pre><code dangerouslySetInnerHTML={{ __html: html }}></code></pre>
-        <textarea value={codes} onChange={ev => setCodes(ev.target.value)}></textarea>
+        <pre style={{ left: `-${scroll[0]}px`, top: `-${scroll[1]}px` }}><code dangerouslySetInnerHTML={{ __html: html }}></code></pre>
+        <textarea
+          value={codes}
+          onChange={ev => setCodes(ev.target.value)}
+          onScroll={handleTextAreaScroll}
+        />
       </div>
     </>
   ) : null
