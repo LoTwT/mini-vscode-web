@@ -21,11 +21,14 @@ const Editor = () => {
 
   const html = useMemo(() => hljs.highlight(codes, { language: "javascript" }).value, [codes])
 
-  const [containerHeight, setContainerHeight] = useState(0)
+  const [containerSize, setContainerSize] = useState<[number, number]>([0, 0])
   const containerRef = useRef<Nullable<HTMLDivElement>>(null)
 
   useEffect(() => {
-    setContainerHeight(containerRef.current?.offsetHeight || 0)
+    setContainerSize([
+      containerRef.current?.offsetWidth || 0,
+      containerRef.current?.offsetHeight || 0
+    ])
   }, [containerRef])
 
   const [textAreaHeight, setTextAreaHeight] = useState(0)
@@ -36,7 +39,7 @@ const Editor = () => {
   }, [textAreaRef])
 
   useEffect(() => {
-    const handleResize = () => setTextAreaHeight(textAreaRef.current?.scrollHeight || 0)
+    const handleResize = () => setContainerSize([textAreaRef.current?.offsetWidth || 0, textAreaRef.current?.offsetHeight || 0])
 
     window.addEventListener("resize", handleResize)
 
@@ -49,20 +52,36 @@ const Editor = () => {
     setTextAreaHeight(ev.target.value.split("\n").length * 26)
   }
 
+  const [preWidth, setPreWidth] = useState(0)
+  const preRef = useRef<Nullable<HTMLPreElement>>(null)
+  useEffect(() => {
+    setPreWidth(preRef.current?.scrollWidth || 0)
+  }, [preRef])
+
+  useEffect(() => {
+    setPreWidth(preRef.current?.scrollWidth || 0)
+  }, [html])
+
   return currTab ? (
     <div className="editor-container" ref={containerRef}>
-      <div className="editor" style={{ height: `${containerHeight}px` }}>
-        <pre><code dangerouslySetInnerHTML={{ __html: html }}></code></pre>
+      <div className="editor"
+        style={{
+          width: `${containerSize[0]}px`,
+          height: `${containerSize[1]}px`
+        }}
+      >
+        <pre ref={preRef}><code dangerouslySetInnerHTML={{ __html: html }}></code></pre>
         <textarea
           ref={textAreaRef}
           style={{
+            width: `${preWidth}px`,
             height: `${textAreaHeight}px`,
-            paddingBottom: `${containerHeight - 26}px`
+            paddingBottom: `${containerSize[1] - 26}px`
           }}
           value={codes}
           onChange={handleTextAreaChange}
         />
-        <div className="spacer-holder" style={{ height: `${containerHeight - 26}px` }}></div>
+        <div className="spacer-holder" style={{ height: `${containerSize[1] - 26}px` }}></div>
       </div>
     </div>
   ) : null
