@@ -1,38 +1,13 @@
-.editor {
+.editor-container {
   position: relative;
   height: 100%;
-  overflow: hidden;
 
-  @font: 20px/26px Consolas, "Courier New", monospace;
-
-  pre {
-    font: @font;
+  .editor {
     position: absolute;
-    z-index: 1;
+    min-width: 100%;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
-
-    code {
-      font: @font;
-    }
-  }
-
-  textarea {
-    font: @font;
-    position: absolute;
-    z-index: 2;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    color: transparent;
-    caret-color: #fff;
-    border: none;
-    outline: none;
-    resize: none;
+    overflow: auto;
 
     &::-webkit-scrollbar {
       width: 14px;
@@ -44,6 +19,32 @@
 
     &::-webkit-scrollbar-thumb {
       background: #424242;
+    }
+
+    @font: 20px/26px Consolas, "Courier New", monospace;
+
+    pre {
+      font: @font;
+
+      code {
+        font: @font;
+      }
+    }
+
+    textarea {
+      font: @font;
+      position: absolute;
+      z-index: 2;
+      left: 0;
+      top: 0;
+      width: 100%;
+      background: transparent;
+      color: transparent;
+      caret-color: #fff;
+      border: none;
+      outline: none;
+      resize: none;
+      overflow: hidden;
     }
   }
 }

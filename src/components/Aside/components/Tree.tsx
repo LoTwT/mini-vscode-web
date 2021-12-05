@@ -17,8 +17,6 @@ const Tree = ({ root }: ITreeProp) => {
   const dispatch = useDispatch()
   const { openDirs, openTabs, currTab } = useSelector((state: Store) => state)
 
-
-
   useEffect(() => {
     invokePre<IDirectoryContent[]>(INVOKE_PRELOAD_MESSAGE.READ_DIR, root).then(res => {
       // 对读取到的文件夹内容进行排序
