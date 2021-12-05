@@ -45,7 +45,8 @@ const Editor = () => {
 
   const handleTextAreaChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCodes(ev.target.value)
-    setTextAreaHeight(ev.target.scrollHeight)
+    // setTextAreaHeight(ev.target.scrollHeight)
+    setTextAreaHeight(ev.target.value.split("\n").length * 26)
   }
 
   return currTab ? (
@@ -54,10 +55,14 @@ const Editor = () => {
         <pre><code dangerouslySetInnerHTML={{ __html: html }}></code></pre>
         <textarea
           ref={textAreaRef}
-          style={{ height: `${textAreaHeight}px` }}
+          style={{
+            height: `${textAreaHeight}px`,
+            paddingBottom: `${containerHeight - 26}px`
+          }}
           value={codes}
           onChange={handleTextAreaChange}
         />
+        <div className="spacer-holder" style={{ height: `${containerHeight - 26}px` }}></div>
       </div>
     </div>
   ) : null
