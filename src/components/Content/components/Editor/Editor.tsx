@@ -21,7 +21,65 @@ const Editor = () => {
     invokePre<string>(INVOKE_PRELOAD_MESSAGE.READ_FILE, currTab).then(setCodes)
   }, [currTab])
 
-  const html = useMemo(() => hljs.highlight(codes, { language: "javascript" }).value, [codes])
+  const html = useMemo(() => {
+    const commentSpanStart = `<span class="hljs-comment">`
+    const commentSpanEnd = "</span>"
+
+    let html = hljs.highlight(codes, { language: "javascript" }).value
+    let ret: (string | { value: string, type: "comment" })[] = []
+
+    // 处理换行注释
+    while (html) {
+      const start = html.indexOf(commentSpanStart)
+      if (start === -1) break
+
+      let end = -1
+      let waitEnd = 1
+      for (let i = start + commentSpanStart.length; i < html.length; i++) {
+        if (html[i] === "<") {
+          if (html[i + 1] === "/") {
+            waitEnd -= 1
+
+            if (waitEnd === 0) {
+              end = i
+              break
+            }
+          } else {
+            waitEnd += 1
+          }
+        }
+      }
+      if (end === -1) break
+
+      const comment = html.substring(start, end + commentSpanEnd.length)
+
+      ret.push(html.substring(0, start))
+      ret.push({ value: comment, type: "comment" })
+      html = html.substring(end + commentSpanEnd.length)
+    }
+
+    if (html) {
+      ret.push(html)
+    }
+
+    ret = ret.filter(item => item).map(item => {
+      if (typeof item === "string") {
+        return item
+      } else {
+        const comment = item.value.substring(
+          commentSpanStart.length,
+          item.value.length - commentSpanEnd.length
+        )
+
+        return comment
+          .split(/\r\n|\n/g)
+          .map(line => `<span class="hljs-comment">${line}</span>`)
+          .join("\n")
+      }
+    })
+
+    return ret.join("")
+  }, [codes])
 
   const containerRef = useRef<Nullable<HTMLDivElement>>(null)
   const [containerSize, setContainerSize] = useState<[number, number]>([0, 0])
