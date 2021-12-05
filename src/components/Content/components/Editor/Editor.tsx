@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { useSelector, useDispatch } from "react-redux"
 
 import hljs from "highlight.js"
@@ -19,7 +19,7 @@ const Editor = () => {
     invokePre<string>(INVOKE_PRELOAD_MESSAGE.READ_FILE, currTab).then(setCodes)
   }, [currTab])
 
-  const html = hljs.highlight(codes, { language: "javascript" }).value
+  const html = useMemo(() => hljs.highlight(codes, { language: "javascript" }).value, [codes])
 
   return currTab ? (
     <>
