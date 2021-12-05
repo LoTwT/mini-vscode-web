@@ -10,6 +10,8 @@ import { INVOKE_PRELOAD_MESSAGE } from "@/store/const"
 import { Store } from "@/types/store"
 import { Nullable } from "@/types"
 
+const lineHeight = 26
+
 const Editor = () => {
   const currTab = useSelector((state: Store) => state.currTab)
 
@@ -21,8 +23,32 @@ const Editor = () => {
 
   const html = useMemo(() => hljs.highlight(codes, { language: "javascript" }).value, [codes])
 
-  const [containerSize, setContainerSize] = useState<[number, number]>([0, 0])
   const containerRef = useRef<Nullable<HTMLDivElement>>(null)
+  const [containerSize, setContainerSize] = useState<[number, number]>([0, 0])
+  const [scroll, setScroll] = useState<[number, number]>([0, 0])
+
+  const handleScroll = (ev: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    setScroll([ev.currentTarget.scrollLeft, ev.currentTarget.scrollTop])
+  }
+
+  const lineRange = useMemo(() => {
+    const startLine = Math.floor(scroll[1] / lineHeight)
+    const lineCount = Math.ceil(containerSize[1] / lineHeight)
+    const endLine = startLine + lineCount
+
+    return [startLine, endLine]
+  }, [scroll, containerSize])
+
+  const htmlLines = useMemo(() => {
+    const lines = html.split(/\r\n|\n/)
+    const htmlLines = []
+
+    for (let i = lineRange[0]; i < lineRange[1]; i++) {
+      htmlLines.push(lines[i])
+    }
+
+    return htmlLines
+  }, [html, lineRange])
 
   useEffect(() => {
     setContainerSize([
@@ -48,7 +74,6 @@ const Editor = () => {
 
   const handleTextAreaChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCodes(ev.target.value)
-    // setTextAreaHeight(ev.target.scrollHeight)
     setTextAreaHeight(ev.target.value.split("\n").length * 26)
   }
 
@@ -64,13 +89,23 @@ const Editor = () => {
 
   return currTab ? (
     <div className="editor-container" ref={containerRef}>
-      <div className="editor"
+      <div
+        className="editor"
         style={{
           width: `${containerSize[0]}px`,
           height: `${containerSize[1]}px`
         }}
+        onScroll={handleScroll}
       >
-        <pre ref={preRef}><code dangerouslySetInnerHTML={{ __html: html }}></code></pre>
+        <pre
+          ref={preRef}
+          style={{
+            top: `${lineRange[0] * lineHeight}px`
+          }}
+        >
+          <code dangerouslySetInnerHTML={{ __html: htmlLines.join("\r\n") }}></code>
+        </pre>
+
         <textarea
           ref={textAreaRef}
           style={{
