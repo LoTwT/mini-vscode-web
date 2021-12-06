@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react"
 import { useSelector } from "react-redux"
 
-import "highlight.js/styles/github-dark.css"
+import "highlight.js/styles/vs2015.css"
 import "./Editor.less"
 
 import hljs from "highlight.js"
@@ -9,6 +9,7 @@ import { invokePre } from "@/libs/channel"
 import { INVOKE_PRELOAD_MESSAGE } from "@/store/const"
 import { Store } from "@/types/store"
 import { Nullable } from "@/types"
+import Minimap from "../Minimap/Minimap"
 
 const lineHeight = 26
 
@@ -147,6 +148,10 @@ const Editor = () => {
 
   return currTab ? (
     <div className="editor-container" ref={containerRef}>
+      <Minimap
+        codes={codes}
+        width={containerSize[0]}
+      />
       <div
         className="editor"
         style={{
