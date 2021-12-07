@@ -34,7 +34,7 @@ const Minimap = forwardRef(({
     const div = document.createElement("div")
     div.style.width = `${width}px`
     div.style.background = "#1e1e1e"
-    div.innerHTML = `<pre><code style='font: 20px/26px Consolas, "Courier New", monospace;'>${html}</code></pre>`
+    div.innerHTML = `<pre><code style='color: #fff;font: 20px/26px Consolas, "Courier New", monospace;'>${html}</code></pre>`
     document.body.appendChild(div)
 
     html2canvas(div).then(canvas => {
@@ -80,16 +80,16 @@ const Minimap = forwardRef(({
               // before => [0, line]
               ctx?.drawImage(
                 canvas,
-                0, 0, w, (line - 1) * lineHeight,
-                0, 0, w, (line - 1) * lineHeight)
+                0, 0, w, line * lineHeight,
+                0, 0, w, line * lineHeight)
 
-              // add => line
+              // add => 不用管 => 添加的是空行
 
               // after [line, ]
               ctx?.drawImage(
                 canvas,
                 0, line * lineHeight, w, canvas.height - line * lineHeight,
-                0, (line + 1) * lineHeight, w, line * lineHeight)
+                0, (line + 1) * lineHeight, w, canvas.height - line * lineHeight)
 
               minimapDivRef.current.innerHTML = ""
               minimapDivRef.current.appendChild(newCanvas)
