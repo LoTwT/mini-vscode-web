@@ -10,6 +10,7 @@ import { INVOKE_PRELOAD_MESSAGE } from "@/store/const"
 import { Store } from "@/types/store"
 import { Nullable } from "@/types"
 import Minimap from "../Minimap/Minimap"
+import { textDiff } from "@/utils/textDiff"
 
 const lineHeight = 26
 
@@ -131,9 +132,16 @@ const Editor = () => {
     return () => window.removeEventListener("resize", handleResize)
   })
 
+  const minimapRef = useRef<Nullable<any>>(null)
   const handleTextAreaChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setCodes(ev.target.value)
-    setTextAreaHeight(ev.target.value.split("\n").length * 26)
+    const oldCodes = codes
+    const newCodes = ev.target.value
+
+    const diffRes = textDiff(oldCodes, newCodes)
+    minimapRef?.current.update(diffRes)
+
+    setCodes(newCodes)
+    setTextAreaHeight(newCodes.split("\n").length * 26)
   }
 
   const [preWidth, setPreWidth] = useState(0)
@@ -149,6 +157,7 @@ const Editor = () => {
   return currTab ? (
     <div className="editor-container" ref={containerRef}>
       <Minimap
+        ref={minimapRef}
         codes={codes}
         width={containerSize[0]}
       />
