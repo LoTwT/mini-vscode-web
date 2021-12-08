@@ -140,6 +140,52 @@ const Minimap = forwardRef(({
 
             break
           case "change":
+            if (minimapDivRef.current) {
+              const newCanvas = document.createElement("canvas")
+              const ctx = newCanvas.getContext("2d")
+              const canvas = minimapDivRef.current.children[0] as HTMLCanvasElement
+
+              if (canvas.height > 0) {
+                const w = canvas.width || 0
+                const h = canvas.height || 0
+                const rate = (minimapDivRef.current.offsetWidth || 1) / w
+
+                newCanvas.width = w
+                newCanvas.height = h
+                newCanvas.style.width = `${rate * w}px`
+                newCanvas.style.height = `${rate * h}px`
+
+                // 切成三部分
+                // before => [0, line]
+                ctx?.drawImage(
+                  canvas,
+                  0, 0, w, line * lineHeight,
+                  0, 0, w, line * lineHeight
+                )
+
+                // current
+                const htmlLines = html.split(/\r\n|\n/)
+                const newHtml = htmlLines[line]
+
+                ctx?.clearRect(0, line * lineHeight, width, lineHeight)
+                renderHtml(newHtml, width).then(canvas => {
+                  if (canvas.height > 0) {
+                    ctx?.drawImage(canvas, 0, line * lineHeight)
+                  }
+                })
+
+                // after [line, ]
+                ctx?.drawImage(
+                  canvas,
+                  0, line * lineHeight, w, canvas.height - line * lineHeight,
+                  0, line * lineHeight, w, canvas.height - line * lineHeight
+                )
+
+                minimapDivRef.current.innerHTML = ""
+                minimapDivRef.current.appendChild(newCanvas)
+              }
+            }
+
             break
           default:
             break
