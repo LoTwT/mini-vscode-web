@@ -3,6 +3,7 @@ import { Nullable } from "@/types"
 export interface TextDiffResult {
   type: "change" | "add" | "delete"
   line: number
+  lines: number
 }
 
 export const textDiff = (oldText: string, newText: string): Nullable<TextDiffResult> => {
@@ -15,28 +16,33 @@ export const textDiff = (oldText: string, newText: string): Nullable<TextDiffRes
       if (oldLines[i] !== newLines[i]) {
         return {
           type: "change",
-          line: i
+          line: i,
+          lines: 1
         }
       }
     }
   } else if (oldLines.length < newLines.length) {
     // 新增行
+    const deltaLinesCount = newLines.length - oldLines.length
+
     for (let i = 0; i < newLines.length; i++) {
       if (oldText === [
         ...newLines.slice(0, i),
-        ...newLines.slice(i + 1)
+        ...newLines.slice(i + deltaLinesCount)
       ].join("\n")) {
-        return { type: "add", line: i }
+        return { type: "add", line: i, lines: deltaLinesCount }
       }
     }
   } else {
     // 删除行
+    const deltaLinesCount = oldLines.length - newLines.length
+
     for (let i = 0; i < oldLines.length; i++) {
       if (newText === [
         ...oldLines.slice(0, i),
-        ...oldLines.slice(i + 1)
+        ...oldLines.slice(i + deltaLinesCount)
       ].join("\n")) {
-        return { type: "delete", line: i }
+        return { type: "delete", line: i, lines: deltaLinesCount }
       }
     }
   }

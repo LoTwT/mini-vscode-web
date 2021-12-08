@@ -138,7 +138,7 @@ const Editor = () => {
     const newCodes = ev.target.value
 
     const diffRes = textDiff(oldCodes, newCodes)
-    minimapRef?.current.update(diffRes)
+    minimapRef?.current.update(newCodes, diffRes)
 
     setCodes(newCodes)
     setTextAreaHeight(newCodes.split("\n").length * 26)
