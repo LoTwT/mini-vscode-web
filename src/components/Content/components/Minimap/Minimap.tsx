@@ -21,11 +21,8 @@ const Minimap = forwardRef(({
 }: IMinimapProps, ref: any) => {
   const minimapDivRef = useRef<Nullable<HTMLDivElement>>(null)
 
-  const [codeMap, setCodeMap] = useState<Nullable<HTMLCanvasElement>>(null)
-
   useEffect(() => {
     if (!width) return
-    if (codeMap) return
 
     const html = hljs.highlight(codes, { language: "javascript" }).value
 
@@ -35,8 +32,6 @@ const Minimap = forwardRef(({
       const rate = (minimapDivRef.current?.offsetWidth || 1) / w
       canvas.style.width = `${rate * w}px`
       canvas.style.height = `${rate * h}px`
-
-      setCodeMap(canvas)
 
       if (minimapDivRef.current) {
         minimapDivRef.current.innerHTML = ""
@@ -52,143 +47,108 @@ const Minimap = forwardRef(({
         const { type, line, lines } = diff
         const html = hljs.highlight(newCodes, { language: "javascript" }).value
 
-        switch (type) {
-          case "add":
-            if (minimapDivRef.current) {
-              const newCanvas = document.createElement("canvas")
-              const ctx = newCanvas.getContext("2d")
-              const canvas = minimapDivRef.current.children[0] as HTMLCanvasElement
+        if (minimapDivRef.current) {
+          const canvas = minimapDivRef.current.children[0] as HTMLCanvasElement
+          const w = canvas.width || 0
+          const h = canvas.height || 0
+          const newCanvas = createNewCanvas(canvas)
+          const ctx = newCanvas.getContext("2d")
 
-              if (canvas.height > 0) {
-                const w = canvas.width || 0
-                const h = canvas.height || 0
-                const rate = (minimapDivRef.current.offsetWidth || 1) / w
+          const handleAdd = () => {
+            if (canvas.height > 0) {
+              // 切成三部分
+              // before => [0, line]
+              ctx?.drawImage(
+                canvas,
+                0, 0, w, line * lineHeight,
+                0, 0, w, line * lineHeight
+              )
 
-                newCanvas.width = w
-                newCanvas.height = h + lineHeight
-                newCanvas.style.width = `${rate * w}px`
-                newCanvas.style.height = `${rate * h}px`
-
-                // 切成三部分
-                // before => [0, line]
-                ctx?.drawImage(
-                  canvas,
-                  0, 0, w, line * lineHeight,
-                  0, 0, w, line * lineHeight
-                )
-
-                // current
-                const htmlLines = html.split(/\r\n|\n/)
-                const newHtml = htmlLines.slice(line, line + lines).join("\n")
-                if (newHtml) {
-                  renderHtml(newHtml, width).then(canvas => {
-                    ctx?.drawImage(canvas, 0, line * lineHeight)
-                  })
-                }
-
-                // after [line, ]
-                ctx?.drawImage(
-                  canvas,
-                  0, line * lineHeight, w, canvas.height - line * lineHeight,
-                  0, (line + lines) * lineHeight, w, canvas.height - line * lineHeight
-                )
-
-                minimapDivRef.current.innerHTML = ""
-                minimapDivRef.current.appendChild(newCanvas)
-              }
-            }
-
-
-            break
-          case "delete":
-            if (minimapDivRef.current) {
-              const newCanvas = document.createElement("canvas")
-              const ctx = newCanvas.getContext("2d")
-              const canvas = minimapDivRef.current.children[0] as HTMLCanvasElement
-
-              if (canvas.height > 0) {
-                const w = canvas.width || 0
-                const h = canvas.height || 0
-                const rate = (minimapDivRef.current.offsetWidth || 1) / w
-
-                newCanvas.width = w
-                newCanvas.height = h - lineHeight
-                newCanvas.style.width = `${rate * w}px`
-                newCanvas.style.height = `${rate * h}px`
-
-                // 切成三部分
-                // before => [0, line]
-                ctx?.drawImage(
-                  canvas,
-                  0, 0, w, line * lineHeight,
-                  0, 0, w, line * lineHeight
-                )
-
-                // current => 不用管 => 直接删除即可
-
-                // after [line, ]
-                ctx?.drawImage(
-                  canvas,
-                  0, (line + lines) * lineHeight, w, canvas.height - line * lineHeight,
-                  0, line * lineHeight, w, canvas.height - line * lineHeight
-                )
-
-                minimapDivRef.current.innerHTML = ""
-                minimapDivRef.current.appendChild(newCanvas)
-              }
-            }
-
-            break
-          case "change":
-            if (minimapDivRef.current) {
-              const newCanvas = document.createElement("canvas")
-              const ctx = newCanvas.getContext("2d")
-              const canvas = minimapDivRef.current.children[0] as HTMLCanvasElement
-
-              if (canvas.height > 0) {
-                const w = canvas.width || 0
-                const h = canvas.height || 0
-                const rate = (minimapDivRef.current.offsetWidth || 1) / w
-
-                newCanvas.width = w
-                newCanvas.height = h
-                newCanvas.style.width = `${rate * w}px`
-                newCanvas.style.height = `${rate * h}px`
-
-                // 切成三部分
-                // before => [0, line]
-                ctx?.drawImage(
-                  canvas,
-                  0, 0, w, line * lineHeight,
-                  0, 0, w, line * lineHeight
-                )
-
-                // current
-                const htmlLines = html.split(/\r\n|\n/)
-                const newHtml = htmlLines[line]
-
-                ctx?.clearRect(0, line * lineHeight, width, lineHeight)
+              // current
+              const htmlLines = html.split(/\r\n|\n/)
+              const newHtml = htmlLines.slice(line, line + lines).join("\n")
+              if (newHtml) {
                 renderHtml(newHtml, width).then(canvas => {
-                  if (canvas.height > 0) {
-                    ctx?.drawImage(canvas, 0, line * lineHeight)
-                  }
+                  ctx?.drawImage(canvas, 0, line * lineHeight)
                 })
-
-                // after [line, ]
-                ctx?.drawImage(
-                  canvas,
-                  0, line * lineHeight, w, canvas.height - line * lineHeight,
-                  0, line * lineHeight, w, canvas.height - line * lineHeight
-                )
-
-                minimapDivRef.current.innerHTML = ""
-                minimapDivRef.current.appendChild(newCanvas)
               }
-            }
 
-            break
-          default:
-            break
+              // after [line, ]
+              ctx?.drawImage(
+                canvas,
+                0, line * lineHeight, w, canvas.height - line * lineHeight,
+                0, (line + lines) * lineHeight, w, canvas.height - line * lineHeight
+              )
+            }
+          }
+
+          const handleDelete = () => {
+            if (canvas.height > 0) {
+              // 切成三部分
+              // before => [0, line]
+              ctx?.drawImage(
+                canvas,
+                0, 0, w, line * lineHeight,
+                0, 0, w, line * lineHeight
+              )
+
+              // current => 不用管 => 直接删除即可
+
+              // after [line, ]
+              ctx?.drawImage(
+                canvas,
+                0, (line + lines) * lineHeight, w, canvas.height - line * lineHeight,
+                0, line * lineHeight, w, canvas.height - line * lineHeight
+              )
+            }
+          }
+
+          const handleChange = () => {
+            if (canvas.height > 0) {
+              // 切成三部分
+              // before => [0, line]
+              ctx?.drawImage(
+                canvas,
+                0, 0, w, line * lineHeight,
+                0, 0, w, line * lineHeight
+              )
+
+              // current
+              const htmlLines = html.split(/\r\n|\n/)
+              const newHtml = htmlLines[line]
+
+              ctx?.clearRect(0, line * lineHeight, width, lineHeight)
+              renderHtml(newHtml, width).then(canvas => {
+                if (canvas.height > 0) {
+                  ctx?.drawImage(canvas, 0, line * lineHeight)
+                }
+              })
+
+              // after [line, ]
+              ctx?.drawImage(
+                canvas,
+                0, line * lineHeight, w, canvas.height - line * lineHeight,
+                0, line * lineHeight, w, canvas.height - line * lineHeight
+              )
+            }
+          }
+
+          switch (type) {
+            case "add":
+              handleAdd()
+              break
+
+            case "delete":
+              handleDelete()
+              break
+
+            case "change":
+              handleChange()
+              break
+
+            default:
+              break
+          }
         }
       }
     }
@@ -213,4 +173,24 @@ const renderHtml = async (html: string, width: number) => {
   document.body.removeChild(div)
 
   return p
+}
+
+const createNewCanvas = (oldCanvas: Nullable<HTMLCanvasElement>) => {
+  const newCanvas = document.createElement("canvas")
+
+  if (oldCanvas && oldCanvas.height > 0) {
+    const w = oldCanvas.width || 0
+    const h = oldCanvas.height || 0
+    const rate = (oldCanvas.offsetWidth || 1) / w
+
+    newCanvas.width = w
+    newCanvas.height = h
+    newCanvas.style.width = `${rate * w}px`
+    newCanvas.style.height = `${rate * h}px`
+
+    oldCanvas.innerHTML = ""
+    oldCanvas.appendChild(newCanvas)
+  }
+
+  return newCanvas
 }
