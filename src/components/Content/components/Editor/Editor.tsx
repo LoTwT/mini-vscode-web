@@ -23,6 +23,16 @@ const Editor = () => {
     invokePre<string>(INVOKE_PRELOAD_MESSAGE.READ_FILE, currTab).then(setCodes)
   }, [currTab])
 
+  /** ====================================================================================== */
+
+  const [selectionEnd, setSelectionEnd] = useState(0)
+  const handleSelect = (ev: React.SyntheticEvent<HTMLTextAreaElement, Event>) => {
+    setSelectionEnd(ev.currentTarget.selectionEnd)
+    const preEl = preRef.current
+  }
+
+  /** ====================================================================================== */
+
   const html = useMemo(() => {
     const commentSpanStart = `<span class="hljs-comment">`
     const commentSpanEnd = "</span>"
@@ -80,8 +90,47 @@ const Editor = () => {
       }
     })
 
-    return ret.join("")
-  }, [codes])
+    html = ret.join("")
+
+    /** ====================================================================================== */
+
+    let n = 0
+    let spanPos = 0
+    for (let i = 0; i < html.length; i++) {
+      if (html[i] === '<') {
+        const end = html.indexOf(">", i + 1)
+        i = end
+      } else if (html[i] === "&") {
+        const end = html.indexOf(";", i + 1)
+        i = end
+        n += 1
+
+        if (n === selectionEnd) {
+          spanPos = i + 1
+          break
+        }
+      } else if (html[i] === "\r") {
+        i += 1
+        n += 1
+
+        if (n === selectionEnd) {
+          spanPos = i + 1
+          break
+        }
+      } else {
+        n += 1
+
+        if (n === selectionEnd) {
+          spanPos = i + 1
+          break
+        }
+      }
+    }
+
+    return `${html.substring(0, spanPos)}<span class="selection"></span>${html.substring(spanPos)}`
+  }, [codes, selectionEnd])
+
+  /** ====================================================================================== */
 
   const containerRef = useRef<Nullable<HTMLDivElement>>(null)
   const [containerSize, setContainerSize] = useState<[number, number]>([0, 0])
@@ -117,6 +166,8 @@ const Editor = () => {
     ])
   }, [containerRef])
 
+  /** ====================================================================================== */
+
   const [textAreaHeight, setTextAreaHeight] = useState(0)
   const textAreaRef = useRef<Nullable<HTMLTextAreaElement>>(null)
 
@@ -132,6 +183,8 @@ const Editor = () => {
     return () => window.removeEventListener("resize", handleResize)
   })
 
+  /** ====================================================================================== */
+
   const minimapRef = useRef<Nullable<any>>(null)
   const handleTextAreaChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
     const oldCodes = codes
@@ -146,6 +199,8 @@ const Editor = () => {
     setCodes(newCodes)
     setTextAreaHeight(newCodes.split("\n").length * 26)
   }
+
+  /** ====================================================================================== */
 
   const [preWidth, setPreWidth] = useState(0)
   const preRef = useRef<Nullable<HTMLPreElement>>(null)
@@ -190,6 +245,7 @@ const Editor = () => {
           }}
           value={codes}
           onChange={handleTextAreaChange}
+          onSelect={handleSelect}
         />
         <div className="spacer-holder" style={{ height: `${containerSize[1] - 26}px` }}></div>
       </div>
