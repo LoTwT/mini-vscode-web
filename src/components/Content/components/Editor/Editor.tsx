@@ -8,13 +8,21 @@ import hljs from "highlight.js"
 import { invokePre } from "@/libs/channel"
 import { INVOKE_PRELOAD_MESSAGE } from "@/store/const"
 import { Store } from "@/types/store"
-import { Nullable } from "@/types"
+import { Nullable, Undefinedable } from "@/types"
 import Minimap from "../Minimap/Minimap"
 import { textDiff } from "@/utils/textDiff"
 
 const lineHeight = 26
 
-const Editor = () => {
+interface IEditorProps {
+  onWordChange: (word: string) => void
+  onCursorPosChange: ([posLeft, posTop]: [Undefinedable<number>, Undefinedable<number>]) => void
+}
+
+const Editor = ({
+  onWordChange,
+  onCursorPosChange
+}: IEditorProps) => {
   const currTab = useSelector((state: Store) => state.currTab)
 
   const [codes, setCodes] = useState("")
@@ -30,6 +38,11 @@ const Editor = () => {
     setSelectionEnd(ev.currentTarget.selectionEnd)
     const preEl = preRef.current
   }
+
+  useEffect(() => {
+    const cursor = containerRef.current?.getElementsByClassName("selection")[0] as Undefinedable<HTMLSpanElement>
+    onCursorPosChange([cursor?.offsetLeft, cursor?.offsetTop])
+  }, [selectionEnd])
 
   /** ====================================================================================== */
 
@@ -198,6 +211,24 @@ const Editor = () => {
 
     setCodes(newCodes)
     setTextAreaHeight(newCodes.split("\n").length * 26)
+
+    // 找到光标前输入的标识符
+    // 往前
+    const n = ev.target.selectionEnd - 1
+    const retArr = []
+    for (let i = n; i >= 0; i--) {
+      if (!/[$\w]/.test(newCodes[i])) break
+      retArr.push(newCodes[i])
+    }
+
+    let ret = retArr.reverse().join("")
+
+    // 往后
+    if (/[$\w]/.test(newCodes[n + 1])) ret = ""
+
+    if (!/[$_a-z][$\w]*/.test(ret)) ret = ""
+
+    onWordChange(ret)
   }
 
   /** ====================================================================================== */

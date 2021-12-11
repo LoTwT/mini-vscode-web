@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo } from "react"
 
 import "./Autocomplete.less"
-import { Nullable } from "@/types"
+import { Nullable, Undefinedable } from "@/types"
 
 interface IAutocompleteProps {
   keyword: Nullable<string>
-  x: number
-  y: number
+  x: Undefinedable<number>
+  y: Undefinedable<number>
 }
 
 const keywords = [
@@ -76,8 +76,6 @@ const Autocomplete = ({
 
     return highlightRet
   }, [keyword])
-
-  console.log(list)
 
   return list.length > 0 ? (
     <div
