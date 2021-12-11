@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react"
+import { useState, useEffect, useMemo, useRef, forwardRef } from "react"
 import { useSelector } from "react-redux"
 
 import "highlight.js/styles/vs2015.css"
@@ -20,11 +20,11 @@ interface IEditorProps {
   onKeyDown: (ev: React.KeyboardEvent<HTMLTextAreaElement>) => void
 }
 
-const Editor = ({
+const Editor = forwardRef(({
   onWordChange,
   onCursorPosChange,
   onKeyDown
-}: IEditorProps) => {
+}: IEditorProps, ref: any) => {
   const currTab = useSelector((state: Store) => state.currTab)
 
   const [codes, setCodes] = useState("")
@@ -214,23 +214,32 @@ const Editor = ({
     setCodes(newCodes)
     setTextAreaHeight(newCodes.split("\n").length * 26)
 
+    onWordChange && onWordChange(findWord()[2])
+  }
+
+  const findWord = (): [number, number, string] => {
     // 找到光标前输入的标识符
     // 往前
-    const n = ev.target.selectionEnd - 1
-    const retArr = []
-    for (let i = n; i >= 0; i--) {
-      if (!/[$\w]/.test(newCodes[i])) break
-      retArr.push(newCodes[i])
+    if (textAreaRef.current) {
+      const newCodes = textAreaRef.current.value
+      const n = textAreaRef.current.selectionEnd - 1
+      const retArr = []
+      for (let i = n; i >= 0; i--) {
+        if (!/[$\w]/.test(newCodes[i])) break
+        retArr.push(newCodes[i])
+      }
+
+      let ret = retArr.reverse().join("")
+
+      // 往后
+      if (/[$\w]/.test(newCodes[n + 1])) ret = ""
+
+      if (!/[$_a-z][$\w]*/.test(ret)) ret = ""
+
+      return [n - ret.length, n, ret]
+    } else {
+      return [0, 0, ""]
     }
-
-    let ret = retArr.reverse().join("")
-
-    // 往后
-    if (/[$\w]/.test(newCodes[n + 1])) ret = ""
-
-    if (!/[$_a-z][$\w]*/.test(ret)) ret = ""
-
-    onWordChange(ret)
   }
 
   /** ====================================================================================== */
@@ -244,6 +253,25 @@ const Editor = ({
   useEffect(() => {
     setPreWidth(preRef.current?.scrollWidth || 0)
   }, [html])
+
+  /** ====================================================================================== */
+
+  const [cursorPos, setCursorPos] = useState(0)
+
+  ref.current = {
+    onEnterDown(value: string) {
+      const [start, end] = findWord()
+      setCodes(`${codes.substring(0, start + 1)}${value}${codes.substring(end + 1)}`)
+      setCursorPos(start + 1 + value.length)
+    }
+  }
+
+  useEffect(() => {
+    if (cursorPos > 0) {
+      textAreaRef.current?.setSelectionRange(cursorPos, cursorPos)
+      setCursorPos(0)
+    }
+  }, [codes])
 
   return currTab ? (
     <div className="editor-container" ref={containerRef}>
@@ -285,6 +313,6 @@ const Editor = ({
       </div>
     </div>
   ) : null
-}
+})
 
 export default Editor

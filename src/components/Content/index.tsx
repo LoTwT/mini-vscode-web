@@ -10,6 +10,8 @@ import { useDebounce } from "@/utils"
 export default () => {
   const [word, setWord] = useState("")
 
+  const editorRef = useRef<Nullable<any>>(null)
+
   const [cursorPos, _setCursorPos] = useState<[Undefinedable<number>, Undefinedable<number>]>([0, 0])
   const setCursorPos = useDebounce(_setCursorPos, 50)
 
@@ -28,9 +30,15 @@ export default () => {
     }
   }
 
+  const handleAutocompleteEnterDown = (value: string) => {
+    editorRef.current.onEnterDown(value)
+    setWord("")
+  }
+
   return (
     <div className="editor-content">
       <Editor
+        ref={editorRef}
         onWordChange={setWord}
         onCursorPosChange={setCursorPos}
         onKeyDown={handleKeyDown}
@@ -41,7 +49,7 @@ export default () => {
         x={cursorPos[0]}
         y={cursorPos[1] && (cursorPos[1] + 26)}
         onVisibleChange={setAutocompleteVisible}
-        onEnterDown={value => console.log(value)}
+        onEnterDown={handleAutocompleteEnterDown}
       />
     </div>
   )
