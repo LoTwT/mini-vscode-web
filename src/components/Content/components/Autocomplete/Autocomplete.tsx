@@ -56,7 +56,7 @@ const Autocomplete = forwardRef(({
       let s = 0
 
       for (let i = 0; i < keyword.length; i++) {
-        let n = str.search(new RegExp(keyword[i], "i"))
+        let n = str.substring(s).search(new RegExp(keyword[i], "i")) + s
 
         if (n > s) {
           arr.push({ type: "string", value: str.substring(s, n) })
