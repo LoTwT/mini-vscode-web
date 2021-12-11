@@ -17,11 +17,13 @@ const lineHeight = 26
 interface IEditorProps {
   onWordChange: (word: string) => void
   onCursorPosChange: ([posLeft, posTop]: [Undefinedable<number>, Undefinedable<number>]) => void
+  onKeyDown: (ev: React.KeyboardEvent<HTMLTextAreaElement>) => void
 }
 
 const Editor = ({
   onWordChange,
-  onCursorPosChange
+  onCursorPosChange,
+  onKeyDown
 }: IEditorProps) => {
   const currTab = useSelector((state: Store) => state.currTab)
 
@@ -277,6 +279,7 @@ const Editor = ({
           value={codes}
           onChange={handleTextAreaChange}
           onSelect={handleSelect}
+          onKeyDown={onKeyDown}
         />
         <div className="spacer-holder" style={{ height: `${containerSize[1] - 26}px` }}></div>
       </div>

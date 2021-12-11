@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect, useMemo, forwardRef } from "react"
 
 import "./Autocomplete.less"
 import { Nullable, Undefinedable } from "@/types"
@@ -7,6 +7,8 @@ interface IAutocompleteProps {
   keyword: Nullable<string>
   x: Undefinedable<number>
   y: Undefinedable<number>
+  onVisibleChange: (isVisible: boolean) => void
+  onEnterDown: (value: string) => void
 }
 
 const keywords = [
@@ -26,11 +28,13 @@ const keywords = [
   "within"
 ]
 
-const Autocomplete = ({
+const Autocomplete = forwardRef(({
   keyword,
   x,
-  y
-}: IAutocompleteProps) => {
+  y,
+  onVisibleChange,
+  onEnterDown
+}: IAutocompleteProps, ref: any) => {
   const [curr, setCurr] = useState(0)
   useEffect(() => setCurr(0), [keyword])
 
@@ -77,6 +81,48 @@ const Autocomplete = ({
     return highlightRet
   }, [keyword])
 
+  /** ====================================================================================== */
+
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    if (list.length > 0 && isVisible === false) {
+      setIsVisible(true)
+      onVisibleChange && onVisibleChange(true)
+    } else if (list.length === 0 && isVisible === true) {
+      setIsVisible(false)
+      onVisibleChange && onVisibleChange(false)
+    }
+  }, [list])
+
+  /** ====================================================================================== */
+
+  ref.current = {
+    onKeyDown(key: string) {
+      switch (key) {
+        case "ArrowUp":
+          if (curr === 0) {
+            setCurr(list.length - 1)
+          } else {
+            setCurr(curr - 1)
+          }
+          break
+        case "ArrowDown":
+          if (curr === list.length - 1) {
+            setCurr(0)
+          } else {
+            setCurr(curr + 1)
+          }
+          break
+        case "Enter":
+          onEnterDown && onEnterDown(list[curr].map(item => item.value).join(""))
+          break
+        default:
+          break
+      }
+    }
+  }
+
   return list.length > 0 ? (
     <div
       className="autocomplete"
@@ -109,6 +155,6 @@ const Autocomplete = ({
       </ul>
     </div>
   ) : null
-}
+})
 
 export default Autocomplete
