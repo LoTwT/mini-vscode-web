@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo, useRef, forwardRef } from "react"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 
 import "highlight.js/styles/vs2015.css"
 import "./Editor.less"
 
 import hljs from "highlight.js"
 import { invokePre } from "@/libs/channel"
-import { INVOKE_PRELOAD_MESSAGE } from "@/store/const"
+import { ACTION_MAP, INVOKE_PRELOAD_MESSAGE } from "@/store/const"
 import { Store } from "@/types/store"
 import { Nullable, Undefinedable } from "@/types"
 import Minimap from "../Minimap/Minimap"
@@ -43,6 +43,12 @@ const Editor = forwardRef(({
 }: IEditorProps, ref: any) => {
   const currTab = useSelector((state: Store) => state.currTab)
 
+  /** ====================================================================================== */
+
+  const dispatch = useDispatch()
+
+  /** ====================================================================================== */
+
   const [ext, setExt] = useState<Nullable<string>>(null)
 
   const [codes, setCodes] = useState("")
@@ -61,7 +67,6 @@ const Editor = forwardRef(({
   const [selectionEnd, setSelectionEnd] = useState(0)
   const handleSelect = (ev: React.SyntheticEvent<HTMLTextAreaElement, Event>) => {
     setSelectionEnd(ev.currentTarget.selectionEnd)
-    const preEl = preRef.current
   }
 
   useEffect(() => {
@@ -210,8 +215,11 @@ const Editor = forwardRef(({
   const textAreaRef = useRef<Nullable<HTMLTextAreaElement>>(null)
 
   useEffect(() => {
-    setTextAreaHeight(textAreaRef.current?.scrollHeight || 0)
-  }, [textAreaRef])
+    if (textAreaRef.current) {
+      setTextAreaHeight(textAreaRef.current.scrollHeight)
+
+    }
+  }, [textAreaRef, html])
 
   useEffect(() => {
     const handleResize = () => setContainerSize([textAreaRef.current?.offsetWidth || 0, textAreaRef.current?.offsetHeight || 0])
@@ -296,8 +304,23 @@ const Editor = forwardRef(({
     }
   }, [codes])
 
+  /** ====================================================================================== */
+
+  useEffect(() => {
+    dispatch({
+      type: ACTION_MAP.SET_TAB_STATES, value: {
+        tab: currTab,
+        scrollPos: scroll,
+        cursorPos: selectionEnd
+      }
+    })
+  }, [scroll, selectionEnd])
+
   return currTab ? (
-    <div className="editor-container" ref={containerRef}>
+    <div
+      ref={containerRef}
+      className="editor-container"
+    >
       <Minimap
         ref={minimapRef}
         codes={codes}

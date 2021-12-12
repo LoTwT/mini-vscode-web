@@ -3,6 +3,14 @@ export interface Store {
   openDirs: string[]
   openTabs: string[]
   currTab: string
+  tabStates: ITabStates
+}
+
+export interface ITabStates {
+  [filename: string]: {
+    scrollPos: [number, number]
+    cursorPos: [number, number]
+  }
 }
 
 export type StoreAction = CreateAction<Store> | {
