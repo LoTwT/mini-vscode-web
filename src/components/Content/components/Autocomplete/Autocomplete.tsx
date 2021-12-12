@@ -7,31 +7,40 @@ interface IAutocompleteProps {
   keyword: Nullable<string>
   x: Undefinedable<number>
   y: Undefinedable<number>
+  ext: Nullable<string>
   onVisibleChange: (isVisible: boolean) => void
   onEnterDown: (value: string) => void
 }
 
-const keywords = [
-  "window",
-  "document",
-  "String",
-  "Number",
-  "Math",
-  "Array",
-  "onclick",
-  "function",
-  "const",
-  "let",
-  "return",
-  "keyword",
-  "useMemo",
-  "within"
-]
+const keywords: Record<string, string[]> = {
+  ".tsx": [
+    "window",
+    "document",
+    "String",
+    "Number",
+    "Math",
+    "Array",
+    "onclick",
+    "function",
+    "const",
+    "let",
+    "return",
+    "keyword",
+    "useMemo",
+    "within"
+  ],
+  ".less": [
+    "display",
+    "background",
+    "background-color"
+  ]
+}
 
 const Autocomplete = forwardRef(({
   keyword,
   x,
   y,
+  ext,
   onVisibleChange,
   onEnterDown
 }: IAutocompleteProps, ref: any) => {
@@ -42,15 +51,22 @@ const Autocomplete = forwardRef(({
   const list = useMemo(() => {
     if (!keyword) return []
 
-    // 1. 直接查找
-    const ret1 = keywords.filter(str => str.search(new RegExp(keyword, "i")) !== -1)
-    ret1.sort((s1, s2) => s1.search(new RegExp(keyword, "i")) - s2.search(new RegExp(keyword, "i")))
+    let matchRet: string[] = []
 
-    // 2. 可以有其他东西
-    const re = new RegExp(keyword.split("").join(".*"), "i")
-    const ret2 = keywords.filter(str => re.test(str))
+    console.log(ext)
 
-    const matchRet = Array.from(new Set([...ret1, ...ret2]))
+    if (ext != null && keywords[ext]) {
+      // 1. 直接查找
+      const ret1 = keywords[ext].filter(str => str.search(new RegExp(keyword, "i")) !== -1)
+      ret1.sort((s1, s2) => s1.search(new RegExp(keyword, "i")) - s2.search(new RegExp(keyword, "i")))
+
+      // 2. 可以有其他东西
+      const re = new RegExp(keyword.split("").join(".*"), "i")
+      const ret2 = keywords[ext].filter(str => re.test(str))
+
+      matchRet = Array.from(new Set([...ret1, ...ret2]))
+    }
+
     const highlightRet = matchRet.map(str => {
       const arr: { type: string, value: string; }[] = []
       let s = 0

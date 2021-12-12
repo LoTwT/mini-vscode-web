@@ -6,6 +6,7 @@ import Editor from "./components/Editor/Editor"
 import Autocomplete from "./components/Autocomplete/Autocomplete"
 import { Nullable, Undefinedable } from "@/types"
 import { useDebounce } from "@/utils"
+import { getExtName } from "@/utils/path"
 
 export default () => {
   const [word, setWord] = useState("")
@@ -30,6 +31,8 @@ export default () => {
     }
   }
 
+  const [ext, setExt] = useState<Nullable<string>>(null)
+
   const handleAutocompleteEnterDown = (value: string) => {
     editorRef.current.onEnterDown(value)
     setWord("")
@@ -39,12 +42,14 @@ export default () => {
     <div className="editor-content">
       <Editor
         ref={editorRef}
+        onExtChange={setExt}
         onWordChange={setWord}
         onCursorPosChange={setCursorPos}
         onKeyDown={handleKeyDown}
       />
       <Autocomplete
         ref={autocompleteRef}
+        ext={ext}
         keyword={word}
         x={cursorPos[0]}
         y={cursorPos[1] && (cursorPos[1] + 26)}

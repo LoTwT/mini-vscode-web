@@ -11,27 +11,50 @@ import { Store } from "@/types/store"
 import { Nullable, Undefinedable } from "@/types"
 import Minimap from "../Minimap/Minimap"
 import { textDiff } from "@/utils/textDiff"
+import { getExtName } from "@/utils/path"
 
 const lineHeight = 26
 
+const extMap: Record<string, string> = {
+  ".js": "javascript",
+  ".ts": "typescript",
+  ".jsx": "javascript",
+  ".tsx": "typescript",
+  ".css": "css",
+  ".less": "less",
+  ".vue": "vue",
+  ".html": "html",
+  ".xml": "xml",
+  ".json": "json"
+}
+
 interface IEditorProps {
+  onExtChange: (ext: Nullable<string>) => void
   onWordChange: (word: string) => void
   onCursorPosChange: ([posLeft, posTop]: [Undefinedable<number>, Undefinedable<number>]) => void
   onKeyDown: (ev: React.KeyboardEvent<HTMLTextAreaElement>) => void
 }
 
 const Editor = forwardRef(({
+  onExtChange,
   onWordChange,
   onCursorPosChange,
   onKeyDown
 }: IEditorProps, ref: any) => {
   const currTab = useSelector((state: Store) => state.currTab)
 
+  const [ext, setExt] = useState<Nullable<string>>(null)
+
   const [codes, setCodes] = useState("")
 
   useEffect(() => {
     invokePre<string>(INVOKE_PRELOAD_MESSAGE.READ_FILE, currTab).then(setCodes)
+    setExt(getExtName(currTab))
   }, [currTab])
+
+  useEffect(() => {
+    onExtChange(ext)
+  }, [ext])
 
   /** ====================================================================================== */
 
@@ -52,7 +75,7 @@ const Editor = forwardRef(({
     const commentSpanStart = `<span class="hljs-comment">`
     const commentSpanEnd = "</span>"
 
-    let html = hljs.highlight(codes, { language: "javascript" }).value
+    let html = hljs.highlight(codes, { language: extMap[ext || ".js"] || "javascript" }).value
     let ret: (string | { value: string, type: "comment" })[] = []
 
     // 处理换行注释
