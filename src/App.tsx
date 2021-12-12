@@ -1,19 +1,25 @@
-import { useState } from "react"
+import { useContext } from "react"
 
 import "./App.less"
 import StatusBar from "@/components/StatusBar/index"
 import Aside from "@/components/Aside/index"
 import Tabs from "@/components/Tabs/index"
 import Content from "@/components/Content/index"
-import ThemeContext, { defaultTheme, IThemeContext } from "@/theme/theme"
+import themeContext from "@/theme/theme"
 
 function App() {
-  const [theme, setTheme] = useState<IThemeContext>(defaultTheme)
+  const theme = useContext(themeContext)
 
   return (
-    <ThemeContext.Provider value={theme}>
+    <themeContext.Provider value={theme}>
       <div className="app-container">
-        <div className="main-container">
+        <div
+          className="main-container"
+          style={{
+            color: theme.main.color,
+            backgroundColor: theme.main.backgroundColor
+          }}
+        >
           {/* aside */}
           <Aside />
 
@@ -28,7 +34,7 @@ function App() {
         </div>
         <StatusBar />
       </div>
-    </ThemeContext.Provider>
+    </themeContext.Provider>
   )
 }
 

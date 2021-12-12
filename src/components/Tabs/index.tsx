@@ -1,11 +1,16 @@
+import { useContext } from "react"
+import { useSelector, useDispatch } from "react-redux"
+
 import { ACTION_MAP } from "@/store/const"
 import { Store } from "@/types/store"
 import { getFileName } from "@/utils/path"
-import { useSelector, useDispatch } from "react-redux"
+import themeContext from "@/theme/theme"
 
 import "./index.less"
 
 export default () => {
+  const theme = useContext(themeContext)
+
   const dispatch = useDispatch()
   const openTabs = useSelector((state: Store) => state.openTabs)
   const currTab = useSelector((state: Store) => state.currTab)
@@ -32,15 +37,41 @@ export default () => {
   }
 
   return openTabs.length !== 0 ? (
-    <div className="tabs">
+    <div
+      className="tabs"
+      style={{
+        height: `${theme.tabs.height}px`,
+        backgroundColor: theme.tabs.backgroundColor
+      }}
+    >
       {openTabs.map((tab) => (
         <div
-          className={`tab ${currTab === tab ? "cur" : ""}`}
+          className="tab"
+          style={{
+            lineHeight: `${theme.tabs.height}px`,
+            backgroundColor: currTab === tab
+              ? theme.main.backgroundColor
+              : theme.tabs.tabBackgroundColor,
+            padding: [
+              `${theme.tabs.tabPadding.top}px`,
+              `${theme.tabs.tabPadding.right}px`,
+              `${theme.tabs.tabPadding.bottom}px`,
+              `${theme.tabs.tabPadding.left}px`
+            ].join(" ")
+          }}
           key={tab}
           onClick={() => onChangeTab(tab)}
         >
           <span className="label">{getFileName(tab)}</span>
-          <span className="close-btn" onClick={(ev) => doClose(ev, tab)}>x</span>
+          <span
+            className="close-btn"
+            style={{
+              color: theme.main.color
+            }}
+            onClick={(ev) => doClose(ev, tab)}
+          >
+            x
+          </span>
         </div>
       ))}
     </div>

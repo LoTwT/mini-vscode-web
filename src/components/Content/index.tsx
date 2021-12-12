@@ -6,7 +6,6 @@ import Editor from "./components/Editor/Editor"
 import Autocomplete from "./components/Autocomplete/Autocomplete"
 import { Nullable, Undefinedable } from "@/types"
 import { useDebounce } from "@/utils"
-import { getExtName } from "@/utils/path"
 
 export default () => {
   const [word, setWord] = useState("")
