@@ -38,7 +38,7 @@ const reducer: Reducer<Store, StoreAction> = (state = initialState, action) => {
 
     case ACTION_MAP.SET_TAB_STATES:
       // const {scrollPos,  cursorPos} = action.value[state.currTab]
-      const { tab, scrollPos, cursorPos } = action.value as unknown as { tab: string, scrollPos: [number, number], cursorPos: [number, number] }
+      const { tab, scrollPos, cursorPos } = action.value as unknown as { tab: string, scrollPos: [number, number], cursorPos: number }
 
       newState = {
         ...state,

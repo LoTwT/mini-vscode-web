@@ -42,6 +42,7 @@ const Editor = forwardRef(({
   onKeyDown
 }: IEditorProps, ref: any) => {
   const currTab = useSelector((state: Store) => state.currTab)
+  const tabState = useSelector((state: Store) => (state.tabStates || {})[currTab])
 
   /** ====================================================================================== */
 
@@ -64,7 +65,11 @@ const Editor = forwardRef(({
 
   /** ====================================================================================== */
 
-  const [selectionEnd, setSelectionEnd] = useState(0)
+  const editorRef = useRef<Nullable<HTMLDivElement>>(null)
+
+  /** ====================================================================================== */
+
+  const [selectionEnd, setSelectionEnd] = useState(tabState?.cursorPos || 0)
   const handleSelect = (ev: React.SyntheticEvent<HTMLTextAreaElement, Event>) => {
     setSelectionEnd(ev.currentTarget.selectionEnd)
   }
@@ -80,7 +85,14 @@ const Editor = forwardRef(({
     const commentSpanStart = `<span class="hljs-comment">`
     const commentSpanEnd = "</span>"
 
-    let html = hljs.highlight(codes, { language: extMap[ext || ".js"] || "javascript" }).value
+    let html = ""
+
+    if (ext && extMap[ext]) {
+      html = hljs.highlight(codes, { language: extMap[ext] }).value
+    } else {
+      html = hljs.highlightAuto(codes).value
+    }
+
     let ret: (string | { value: string, type: "comment" })[] = []
 
     // 处理换行注释
@@ -177,7 +189,7 @@ const Editor = forwardRef(({
 
   const containerRef = useRef<Nullable<HTMLDivElement>>(null)
   const [containerSize, setContainerSize] = useState<[number, number]>([0, 0])
-  const [scroll, setScroll] = useState<[number, number]>([0, 0])
+  const [scroll, setScroll] = useState<[number, number]>(tabState?.scrollPos || [0, 0])
 
   const handleScroll = (ev: React.UIEvent<HTMLDivElement, UIEvent>) => {
     setScroll([ev.currentTarget.scrollLeft, ev.currentTarget.scrollTop])
@@ -246,6 +258,8 @@ const Editor = forwardRef(({
     setTextAreaHeight(newCodes.split("\n").length * 26)
 
     onWordChange && onWordChange(findWord()[2])
+
+    setLastTab(currTab)
   }
 
   const findWord = (): [number, number, string] => {
@@ -316,6 +330,24 @@ const Editor = forwardRef(({
     })
   }, [scroll, selectionEnd])
 
+  /** ====================================================================================== */
+
+  const [lastTab, setLastTab] = useState("")
+
+  useEffect(() => {
+    if (lastTab !== currTab) {
+      if (editorRef.current) {
+        editorRef.current.scrollLeft = scroll[0]
+        editorRef.current.scrollTop = scroll[1]
+      }
+
+      if (textAreaRef.current) {
+        textAreaRef.current.focus()
+        textAreaRef.current.setSelectionRange(selectionEnd, selectionEnd)
+      }
+    }
+  }, [editorRef, html])
+
   return currTab ? (
     <div
       ref={containerRef}
@@ -327,6 +359,7 @@ const Editor = forwardRef(({
         width={containerSize[0]}
       />
       <div
+        ref={editorRef}
         className="editor"
         style={{
           width: `${containerSize[0]}px`,

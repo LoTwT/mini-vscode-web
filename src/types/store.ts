@@ -9,7 +9,7 @@ export interface Store {
 export interface ITabStates {
   [filename: string]: {
     scrollPos: [number, number]
-    cursorPos: [number, number]
+    cursorPos: number
   }
 }
 
