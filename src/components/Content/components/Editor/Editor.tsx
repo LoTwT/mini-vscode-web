@@ -351,6 +351,7 @@ const Editor = forwardRef(({
   return currTab ? (
     <div
       ref={containerRef}
+      key={currTab}
       className="editor-container"
     >
       <Minimap
