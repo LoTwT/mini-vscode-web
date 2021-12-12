@@ -348,6 +348,11 @@ const Editor = forwardRef(({
     }
   }, [editorRef, html])
 
+  /** ====================================================================================== */
+
+  const lineCount = useMemo(() => html.split(/\r\n|\n/).length, [html])
+  const lineNumsWidth = (lineCount.toString().length + 1) * 16
+
   return currTab ? (
     <div
       ref={containerRef}
@@ -360,10 +365,22 @@ const Editor = forwardRef(({
         width={containerSize[0]}
       />
       <div
+        className="line-nums"
+        style={{
+          top: `-${scroll[1]}px`,
+          width: `${lineNumsWidth}px`
+        }}
+      >
+        {new Array(lineCount).fill(1).map((item, index) => (
+          <div key={index}>{index + 1}</div>
+        ))}
+      </div>
+      <div
         ref={editorRef}
         className="editor"
         style={{
-          width: `${containerSize[0]}px`,
+          left: `${lineNumsWidth + 20}px`,
+          width: `${containerSize[0] - lineNumsWidth - 20}px`,
           height: `${containerSize[1]}px`
         }}
         onScroll={handleScroll}

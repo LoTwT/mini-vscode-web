@@ -1,6 +1,20 @@
 .editor-container {
   position: relative;
   height: 100%;
+  overflow: hidden;
+
+  .line-nums {
+    font-size: 16px;
+    text-align: right;
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    div {
+      height: 26px;
+      line-height: 26px;
+    }
+  }
 
   .editor {
     position: absolute;
