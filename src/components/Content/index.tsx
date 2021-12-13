@@ -1,13 +1,17 @@
-import { useState, useRef } from "react"
-
+import { useState, useRef, useContext } from "react"
 
 import "./index.less"
 import Editor from "./components/Editor/Editor"
 import Autocomplete from "./components/Autocomplete/Autocomplete"
 import { Nullable, Undefinedable } from "@/types"
 import { useDebounce } from "@/utils"
+import themeContext from "@/theme/theme"
+import { calcLineHeight } from "@/utils/theme"
 
 export default () => {
+  const theme = useContext(themeContext)
+  const themeLineHeight = calcLineHeight(theme.editor.fontSize, theme.editor.lineHeigtRate)
+
   const [word, setWord] = useState("")
 
   const editorRef = useRef<Nullable<any>>(null)
@@ -37,6 +41,8 @@ export default () => {
     setWord("")
   }
 
+  const [scrollPos, setScrollPos] = useState([0, 0])
+
   return (
     <div className="editor-content">
       <Editor
@@ -45,13 +51,14 @@ export default () => {
         onWordChange={setWord}
         onCursorPosChange={setCursorPos}
         onKeyDown={handleKeyDown}
+        onScroll={setScrollPos}
       />
       <Autocomplete
         ref={autocompleteRef}
         ext={ext}
         keyword={word}
-        x={cursorPos[0]}
-        y={cursorPos[1] && (cursorPos[1] + 26)}
+        x={cursorPos[0] && (cursorPos[0] - scrollPos[0])}
+        y={cursorPos[1] && (cursorPos[1] + themeLineHeight - scrollPos[1])}
         onVisibleChange={setAutocompleteVisible}
         onEnterDown={handleAutocompleteEnterDown}
       />

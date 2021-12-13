@@ -9,11 +9,6 @@
     position: absolute;
     left: 0;
     top: 0;
-
-    div {
-      height: 26px;
-      line-height: 26px;
-    }
   }
 
   .editor {
@@ -22,37 +17,13 @@
     top: 0;
     overflow: auto;
 
-    &::-webkit-scrollbar {
-      width: 14px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: #1e1e1e;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: #424242;
-    }
-
-    @font: 20px/26px Consolas, "Courier New", monospace;
-
     pre {
-      font: @font;
       position: absolute;
       left: 0;
       top: 0;
-
-      code {
-        font: @font;
-
-        // .selection {
-        //   border: 1px solid red;
-        // }
-      }
     }
 
     textarea {
-      font: @font;
       position: absolute;
       z-index: 2;
       left: 0;
@@ -61,7 +32,6 @@
       height: 100%;
       background: transparent;
       color: transparent;
-      caret-color: #fff;
       border: none;
       outline: none;
       resize: none;

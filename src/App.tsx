@@ -9,6 +9,19 @@ import themeContext from "@/theme/theme"
 
 function App() {
   const theme = useContext(themeContext)
+  const scrollStyle = `
+    *::-webkit-scrollbar {
+      width: ${theme.scrollBar.width}px;
+    }
+
+    *::-webkit-scrollbar-track {
+      background: ${theme.scrollBar.backgroundColor};
+    }
+
+    *::-webkit-scrollbar-thumb {
+      background: ${theme.scrollBar.foregroundColor};
+    }
+  `
 
   return (
     <themeContext.Provider value={theme}>
@@ -34,6 +47,8 @@ function App() {
         </div>
         <StatusBar />
       </div>
+      {/* scroll style */}
+      <style dangerouslySetInnerHTML={{ __html: scrollStyle }} />
     </themeContext.Provider>
   )
 }

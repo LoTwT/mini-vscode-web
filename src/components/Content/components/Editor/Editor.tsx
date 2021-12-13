@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, forwardRef } from "react"
+import { useState, useEffect, useMemo, useRef, forwardRef, useContext } from "react"
 import { useSelector, useDispatch } from "react-redux"
 
 import "highlight.js/styles/vs2015.css"
@@ -12,8 +12,8 @@ import { Nullable, Undefinedable } from "@/types"
 import Minimap from "../Minimap/Minimap"
 import { textDiff } from "@/utils/textDiff"
 import { getExtName } from "@/utils/path"
-
-const lineHeight = 26
+import themeContext from "@/theme/theme"
+import { calcLineHeight } from "@/utils/theme"
 
 const extMap: Record<string, string> = {
   ".js": "javascript",
@@ -33,14 +33,19 @@ interface IEditorProps {
   onWordChange: (word: string) => void
   onCursorPosChange: ([posLeft, posTop]: [Undefinedable<number>, Undefinedable<number>]) => void
   onKeyDown: (ev: React.KeyboardEvent<HTMLTextAreaElement>) => void
+  onScroll: (scrollPos: [number, number]) => void
 }
 
 const Editor = forwardRef(({
   onExtChange,
   onWordChange,
   onCursorPosChange,
-  onKeyDown
+  onKeyDown,
+  onScroll
 }: IEditorProps, ref: any) => {
+  const theme = useContext(themeContext)
+  const themeLineHeight = calcLineHeight(theme.editor.fontSize, theme.editor.lineHeigtRate)
+
   const currTab = useSelector((state: Store) => state.currTab)
   const tabState = useSelector((state: Store) => (state.tabStates || {})[currTab])
 
@@ -193,11 +198,12 @@ const Editor = forwardRef(({
 
   const handleScroll = (ev: React.UIEvent<HTMLDivElement, UIEvent>) => {
     setScroll([ev.currentTarget.scrollLeft, ev.currentTarget.scrollTop])
+    onScroll([ev.currentTarget.scrollLeft, ev.currentTarget.scrollTop])
   }
 
   const lineRange = useMemo(() => {
-    const startLine = Math.floor(scroll[1] / lineHeight)
-    const lineCount = Math.ceil(containerSize[1] / lineHeight)
+    const startLine = Math.floor(scroll[1] / themeLineHeight)
+    const lineCount = Math.ceil(containerSize[1] / themeLineHeight)
     const endLine = startLine + lineCount
 
     return [startLine, endLine]
@@ -255,7 +261,7 @@ const Editor = forwardRef(({
     }
 
     setCodes(newCodes)
-    setTextAreaHeight(newCodes.split("\n").length * 26)
+    setTextAreaHeight(newCodes.split("\n").length * themeLineHeight)
 
     onWordChange && onWordChange(findWord()[2])
 
@@ -372,7 +378,15 @@ const Editor = forwardRef(({
         }}
       >
         {new Array(lineCount).fill(1).map((item, index) => (
-          <div key={index}>{index + 1}</div>
+          <div
+            key={index}
+            style={{
+              height: `${themeLineHeight}px`,
+              lineHeight: `${themeLineHeight}px`
+            }}
+          >
+            {index + 1}
+          </div>
         ))}
       </div>
       <div
@@ -388,10 +402,17 @@ const Editor = forwardRef(({
         <pre
           ref={preRef}
           style={{
-            top: `${lineRange[0] * lineHeight}px`
+            top: `${lineRange[0] * themeLineHeight}px`
           }}
         >
-          <code dangerouslySetInnerHTML={{ __html: htmlLines.join("\r\n") }}></code>
+          <code
+            dangerouslySetInnerHTML={{ __html: htmlLines.join("\r\n") }}
+            style={{
+              fontSize: `${theme.editor.fontSize}px`,
+              lineHeight: `${themeLineHeight}px`,
+              fontFamily: theme.editor.fontFamily
+            }}
+          />
         </pre>
 
         <textarea
@@ -399,14 +420,21 @@ const Editor = forwardRef(({
           style={{
             width: `${preWidth}px`,
             height: `${textAreaHeight}px`,
-            paddingBottom: `${containerSize[1] - 26}px`
+            paddingBottom: `${containerSize[1] - themeLineHeight}px`,
+            fontSize: `${theme.editor.fontSize}px`,
+            lineHeight: `${themeLineHeight}px`,
+            fontFamily: theme.editor.fontFamily,
+            caretColor: theme.main.color
           }}
           value={codes}
           onChange={handleTextAreaChange}
           onSelect={handleSelect}
           onKeyDown={onKeyDown}
         />
-        <div className="spacer-holder" style={{ height: `${containerSize[1] - 26}px` }}></div>
+        <div
+          className="spacer-holder"
+          style={{ height: `${containerSize[1] - themeLineHeight}px` }}
+        />
       </div>
     </div>
   ) : null

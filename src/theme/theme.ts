@@ -63,6 +63,18 @@ export interface IThemeContext {
       }
     }
   }
+
+  scrollBar: {
+    width: number
+    backgroundColor: string
+    foregroundColor: string
+  }
+
+  editor: {
+    fontSize: number
+    lineHeigtRate: number
+    fontFamily: string
+  }
 }
 
 const mainBgColor = "#1e1e1e"
@@ -131,6 +143,18 @@ export const defaultTheme: IThemeContext = {
         activeBackgroundColor: "rgba(255, 255, 255, 0.2)"
       }
     }
+  },
+
+  scrollBar: {
+    width: 14,
+    backgroundColor: "#1e1e1e",
+    foregroundColor: "#424242"
+  },
+
+  editor: {
+    fontSize: 20,
+    lineHeigtRate: 1.3,
+    fontFamily: `Consolas, "Courier New", monospace`
   }
 }
 const themeContext = createContext<IThemeContext>(defaultTheme)
