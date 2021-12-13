@@ -1,7 +1,8 @@
-import { useState, useEffect, useMemo, forwardRef } from "react"
+import { useState, useEffect, useMemo, forwardRef, useContext } from "react"
 
 import "./Autocomplete.less"
 import { Nullable, Undefinedable } from "@/types"
+import themeContext from "@/theme/theme"
 
 interface IAutocompleteProps {
   keyword: Nullable<string>
@@ -44,6 +45,8 @@ const Autocomplete = forwardRef(({
   onVisibleChange,
   onEnterDown
 }: IAutocompleteProps, ref: any) => {
+  const theme = useContext(themeContext)
+
   const [curr, setCurr] = useState(0)
   useEffect(() => setCurr(0), [keyword])
 
@@ -52,8 +55,6 @@ const Autocomplete = forwardRef(({
     if (!keyword) return []
 
     let matchRet: string[] = []
-
-    console.log(ext)
 
     if (ext != null && keywords[ext]) {
       // 1. 直接查找
@@ -143,25 +144,48 @@ const Autocomplete = forwardRef(({
     <div
       className="autocomplete"
       style={{
+        // logic
         left: `${x}px`,
-        top: `${y}px`
+        top: `${y}px`,
+
+        // theme
+        backgroundColor: theme.contextMenu.backgroundColor,
+        borderWidth: theme.contextMenu.border.width,
+        borderStyle: theme.contextMenu.border.style,
+        borderColor: theme.contextMenu.border.color,
+        width: `${theme.autocomplete.width}px`,
+        maxHeight: `${theme.autocomplete.maxHeight}px`
       }}
     >
       <ul className="list">
         {list.map((arr, arrIndex) => (
           <li
             key={arrIndex}
-            className={[
-              "item",
-              arrIndex === curr ? "active" : ""
-            ].join(" ")}
+            style={{
+              color: arrIndex === curr
+                ? theme.contextMenu.activeColor
+                : theme.contextMenu.color,
+              backgroundColor: arrIndex === curr
+                ? theme.contextMenu.activeBackgroundColor
+                : "",
+              height: `${theme.contextMenu.itemHeight}px`,
+              lineHeight: `${theme.contextMenu.itemHeight}px`,
+              padding: [
+                `${theme.contextMenu.padding.top}px`,
+                `${theme.contextMenu.padding.right}px`,
+                `${theme.contextMenu.padding.bottom}px`,
+                `${theme.contextMenu.padding.left}px`,
+              ].join(" ")
+            }}
           >
             {arr.map((obj, objIndex) => (
               <span
                 key={objIndex}
-                className={[
-                  obj.type === "highlight" ? "highlight" : ""
-                ].join(" ")}
+                style={{
+                  color: obj.type === "highlight"
+                    ? theme.contextMenu.highlightColor
+                    : ""
+                }}
               >
                 {obj.value}
               </span>
