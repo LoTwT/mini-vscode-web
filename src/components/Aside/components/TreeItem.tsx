@@ -1,3 +1,7 @@
+import themeContext from "@/theme/theme"
+
+import { useContext } from "react"
+
 interface ITreeItemProp {
   title: string
   icon: string
@@ -12,19 +16,36 @@ const TreeItem = ({
   isActive,
   children,
   onClick
-}: ITreeItemProp) => (
-  <li className="tree-item">
-    <div className="head">
-      <span className={`icon iconfont icon-${icon}`}></span>
-      <span
-        className={`title ${isActive ? "active" : ""}`}
-        onClick={onClick}
+}: ITreeItemProp) => {
+  const theme = useContext(themeContext)
+
+  return (
+    <li className="tree-item">
+      <div
+        className="head"
+        style={{
+          height: `${theme.aside.tree.head.height}px`,
+          lineHeight: `${theme.aside.tree.head.height}px`
+        }}
+        onMouseEnter={ev => ev.currentTarget.style.backgroundColor = theme.aside.tree.head.hoverBackgroundColor}
+        onMouseLeave={ev => ev.currentTarget.style.backgroundColor = ""}
       >
-        {title}
-      </span>
-    </div>
-    <div className="content">{children}</div>
-  </li>
-)
+        <span className={`icon iconfont icon-${icon}`}></span>
+        <span
+          className="title"
+          style={{
+            backgroundColor: isActive
+              ? theme.aside.tree.head.activeBackgroundColor
+              : ""
+          }}
+          onClick={onClick}
+        >
+          {title}
+        </span>
+      </div>
+      <div className="content">{children}</div>
+    </li>
+  )
+}
 
 export default TreeItem

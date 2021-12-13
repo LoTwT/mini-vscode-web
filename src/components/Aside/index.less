@@ -1,35 +1,16 @@
-.aside {
-  width: 260px;
-  background: #252525;
-}
+.tree-item {
+  .head {
+    display: flex;
+    cursor: pointer;
 
-.tree {
-  padding-left: 10px;
+    .icon {
+      width: 24px;
+      text-align: center;
+      font-size: 14px;
+    }
 
-  .tree-item {
-    .head {
-      height: 30px;
-      line-height: 30px;
-      display: flex;
-      cursor: pointer;
-
-      &:hover {
-        background: #37373d;
-      }
-
-      .icon {
-        width: 24px;
-        text-align: center;
-        font-size: 14px;
-      }
-
-      .title {
-        flex: 1;
-
-        &.active {
-          background: rgba(255, 255, 255, 0.2);
-        }
-      }
+    .title {
+      flex: 1;
     }
   }
 }

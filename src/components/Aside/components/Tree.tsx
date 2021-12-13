@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useContext } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { invokePre } from "@/libs/channel"
 import type { Nullable } from "@/types/index"
@@ -7,12 +7,15 @@ import TreeItem from "./TreeItem"
 import { ICON_MAP } from "../config/index"
 import type { Store } from "@/types/store"
 import { ACTION_MAP, INVOKE_PRELOAD_MESSAGE } from "@/store/const"
+import themeContext from "@/theme/theme"
 
 interface ITreeProp {
   root: string
 }
 
 const Tree = ({ root }: ITreeProp) => {
+  const theme = useContext(themeContext)
+
   const [list, setList] = useState<Nullable<IDirectoryContent[]>>(null)
   const dispatch = useDispatch()
   const { openDirs, openTabs, currTab } = useSelector((state: Store) => state)
@@ -90,7 +93,11 @@ const Tree = ({ root }: ITreeProp) => {
   }
 
   return (<div>
-    <ul className="tree">
+    <ul
+      style={{
+        paddingLeft: `${theme.aside.tree.indent}px`
+      }}
+    >
       {list && list.map(RenderItem)}
     </ul >
   </div >)

@@ -48,6 +48,21 @@ export interface IThemeContext {
     width: number
     maxHeight: number
   }
+
+  aside: {
+    width: number
+    backgroundColor: string
+
+    tree: {
+      indent: number
+
+      head: {
+        height: number
+        hoverBackgroundColor: string
+        activeBackgroundColor: string
+      }
+    }
+  }
 }
 
 const mainBgColor = "#1e1e1e"
@@ -101,6 +116,21 @@ export const defaultTheme: IThemeContext = {
   autocomplete: {
     width: 430,
     maxHeight: 326
+  },
+
+  aside: {
+    width: 260,
+    backgroundColor: subBgColor,
+
+    tree: {
+      indent: 10,
+
+      head: {
+        height: 30,
+        hoverBackgroundColor: "#37373d",
+        activeBackgroundColor: "rgba(255, 255, 255, 0.2)"
+      }
+    }
   }
 }
 const themeContext = createContext<IThemeContext>(defaultTheme)
