@@ -3,7 +3,8 @@ export const ACTION_MAP = {
   SET_OPEN_TABS: "setOpenTabs",
   SET_CURR_TAB: "setCurrTab",
   REPLACE_STATE: "replaceState",
-  SET_TAB_STATES: "setTabStates"
+  SET_TAB_STATES: "setTabStates",
+  SET_GLOBALS: "setGlobals"
 } as const
 
 export const LOCAL_STORAGE_KEY_MAP = {

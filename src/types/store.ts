@@ -4,6 +4,7 @@ export interface Store {
   openTabs: string[]
   currTab: string
   tabStates: ITabStates
+  globals: IGlobals
 }
 
 export interface ITabStates {
@@ -11,6 +12,16 @@ export interface ITabStates {
     scrollPos: [number, number]
     cursorPos: number
   }
+}
+
+export interface IGlobals {
+  themes?: IThemePlugin[]
+}
+
+export interface IThemePlugin {
+  label: string
+  uiTheme: string
+  path: string
 }
 
 export type StoreAction = CreateAction<Store> | {

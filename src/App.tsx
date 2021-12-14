@@ -1,4 +1,5 @@
 import { useContext } from "react"
+import { useSelector } from "react-redux"
 
 import "./App.less"
 import StatusBar from "@/components/StatusBar/index"
@@ -6,8 +7,12 @@ import Aside from "@/components/Aside/index"
 import Tabs from "@/components/Tabs/index"
 import Content from "@/components/Content/index"
 import themeContext from "@/theme/theme"
+import { Store } from "./types/store"
+
 
 function App() {
+  const themePlugins = useSelector((state: Store) => state.globals)?.themes
+
   const theme = useContext(themeContext)
   const scrollStyle = `
     *::-webkit-scrollbar {

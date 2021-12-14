@@ -52,6 +52,13 @@ const reducer: Reducer<Store, StoreAction> = (state = initialState, action) => {
       }
       break
 
+    case ACTION_MAP.SET_GLOBALS:
+      newState = {
+        ...state,
+        globals: action.value
+      }
+      break
+
     default:
       return state
   }
