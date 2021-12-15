@@ -283,9 +283,11 @@ const Editor = forwardRef(({
       let ret = retArr.reverse().join("")
 
       // 往后
-      if (/[$\w]/.test(newCodes[n + 1])) ret = ""
+      if (newCodes.length + 1 > n) {
+        if (/[$\w]/.test(newCodes[n + 1])) ret = ""
 
-      if (!/[$_a-z][$\w]*/.test(ret)) ret = ""
+        if (!/[$_a-z][$\w]*/.test(ret)) ret = ""
+      }
 
       return [n - ret.length, n, ret]
     } else {
