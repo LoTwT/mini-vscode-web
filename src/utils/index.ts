@@ -8,3 +8,16 @@ export const useDebounce = (cb: Function, delay = 300) => {
     timer = setTimeout(() => cb(...args), delay)
   }
 }
+
+export const extend = <T>(newObj: T, oldObj: T) => {
+  for (const key in oldObj) {
+    if (!newObj[key]) newObj[key] = oldObj[key]
+    else {
+      if (typeof oldObj[key] === "object") {
+        newObj[key] = extend(newObj[key], oldObj[key])
+      }
+    }
+  }
+
+  return newObj
+}
